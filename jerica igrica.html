@@ -3616,7 +3616,7 @@ function celebrateCorrect(streak, coinsEarned) {
   screenFlash(streak >= 5 ? 'gold' : 'win');
   launchConfetti(15 + streak * 8, streak >= 3 ? 1.2 : 0.8);
   spawnCoins(coinsEarned, true);
-  popCoinDisplay();
+  popCoinDisplay(); 
   floatReward('+' + coinsEarned + ' 🪙', 42 + Math.random() * 16, 38 + Math.random() * 10);
   floatReward('+10 XP ⚡', 50 + Math.random() * 10, 52);
 
