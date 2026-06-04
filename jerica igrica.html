@@ -1,0 +1,3702 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrainCoins – Učis in Zaslužiš!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0c29;
+    --bg2: #1a1550;
+    --card: #1e1a60;
+    --accent: #f9c74f;
+    --accent2: #f8961e;
+    --green: #43e97b;
+    --red: #f44b7f;
+    --blue: #4ecdc4;
+    --purple: #a78bfa;
+    --text: #f0eeff;
+    --muted: #9b98cc;
+    --coin: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 80%, rgba(167,139,250,0.25) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 40% at 85% 15%, rgba(78,205,196,0.2) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 60% at 50% 50%, rgba(249,199,79,0.08) 0%, transparent 60%);
+    animation: aurora 12s ease-in-out infinite alternate;
+  }
+
+  @keyframes aurora {
+    0% { opacity: 0.7; transform: scale(1) translate(0, 0); }
+    50% { opacity: 1; transform: scale(1.05) translate(2%, -1%); }
+    100% { opacity: 0.8; transform: scale(1.02) translate(-1%, 2%); }
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 80% 20%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 85%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 10% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.5) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    from { opacity: 0.6; }
+    to { opacity: 1; }
+  }
+
+  #ambient-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .ambient-particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: float-up linear infinite;
+  }
+
+  @keyframes float-up {
+    0% { opacity: 0; transform: translateY(100vh) scale(0); }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.4; }
+    100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+  }
+
+  #confetti-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10000;
+  }
+
+  #flash-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.08s ease-out;
+  }
+  #flash-overlay.flash-win { background: radial-gradient(circle, rgba(67,233,123,0.35) 0%, transparent 70%); opacity: 1; }
+  #flash-overlay.flash-lose { background: radial-gradient(circle, rgba(244,75,127,0.3) 0%, transparent 70%); opacity: 1; }
+  #flash-overlay.flash-gold { background: radial-gradient(circle, rgba(255,215,0,0.45) 0%, transparent 65%); opacity: 1; }
+  #flash-overlay.flash-level { background: radial-gradient(circle, rgba(167,139,250,0.5) 0%, transparent 60%); opacity: 1; }
+
+  .wrapper.shake { animation: screen-shake 0.45s ease; }
+  @keyframes screen-shake {
+    0%, 100% { transform: translate(0, 0); }
+    15% { transform: translate(-6px, 4px); }
+    30% { transform: translate(6px, -4px); }
+    45% { transform: translate(-4px, -6px); }
+    60% { transform: translate(4px, 6px); }
+    75% { transform: translate(-3px, 2px); }
+  }
+
+  .combo-popup {
+    position: fixed;
+    left: 50%;
+    top: 28%;
+    transform: translateX(-50%) scale(0);
+    z-index: 10001;
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    font-weight: 800;
+    text-align: center;
+    pointer-events: none;
+    text-shadow: 0 0 30px currentColor, 0 4px 0 rgba(0,0,0,0.3);
+    animation: combo-pop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @keyframes combo-pop {
+    0% { transform: translateX(-50%) scale(0) rotate(-8deg); opacity: 0; }
+    25% { transform: translateX(-50%) scale(1.25) rotate(3deg); opacity: 1; }
+    70% { transform: translateX(-50%) scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: translateX(-50%) scale(0.8) translateY(-40px); opacity: 0; }
+  }
+
+  .float-reward {
+    position: fixed;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--coin);
+    text-shadow: 0 0 12px rgba(255,215,0,0.8);
+    pointer-events: none;
+    z-index: 9999;
+    animation: float-reward 1.1s ease-out forwards;
+  }
+
+  @keyframes float-reward {
+    0% { opacity: 1; transform: translateY(0) scale(0.5); }
+    20% { transform: translateY(-20px) scale(1.2); }
+    100% { opacity: 0; transform: translateY(-90px) scale(1); }
+  }
+
+  .level-up-banner {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10002;
+    pointer-events: none;
+    animation: level-banner-in 2.2s ease forwards;
+  }
+
+  .level-up-inner {
+    background: linear-gradient(135deg, var(--purple), var(--blue));
+    border: 3px solid rgba(255,255,255,0.4);
+    border-radius: 28px;
+    padding: 28px 48px;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(167,139,250,0.6), 0 20px 50px rgba(0,0,0,0.4);
+    animation: level-pulse 0.6s ease infinite alternate;
+  }
+
+  @keyframes level-banner-in {
+    0% { opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes level-pulse {
+    from { transform: scale(1); box-shadow: 0 0 40px rgba(167,139,250,0.5); }
+    to { transform: scale(1.05); box-shadow: 0 0 80px rgba(78,205,196,0.7); }
+  }
+
+  .level-up-inner .lvl-emoji { font-size: 4rem; display: block; margin-bottom: 8px; animation: bounce 0.5s ease infinite; }
+  .level-up-inner .lvl-title { font-family: 'Fredoka One'; font-size: 2rem; color: white; }
+  .level-up-inner .lvl-sub { color: rgba(255,255,255,0.85); font-weight: 700; margin-top: 4px; }
+
+  .wrapper { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 20px; }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(249,199,79,0.5);
+    animation: logo-glow 3s ease-in-out infinite alternate;
+  }
+  .logo span { color: var(--blue); animation: logo-glow-blue 3s ease-in-out infinite alternate-reverse; }
+
+  @keyframes logo-glow {
+    from { text-shadow: 0 0 15px rgba(249,199,79,0.4); }
+    to { text-shadow: 0 0 35px rgba(249,199,79,0.9), 0 0 60px rgba(249,199,79,0.3); }
+  }
+  @keyframes logo-glow-blue {
+    from { text-shadow: 0 0 10px rgba(78,205,196,0.3); }
+    to { text-shadow: 0 0 25px rgba(78,205,196,0.8); }
+  }
+
+  .coin-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,215,0,0.15);
+    border: 2px solid var(--coin);
+    border-radius: 30px;
+    padding: 8px 18px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--coin);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+  }
+  .coin-display.pop {
+    animation: coin-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes coin-pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.2); box-shadow: 0 0 30px rgba(255,215,0,0.6); }
+    100% { transform: scale(1); }
+  }
+
+  .coin-icon { font-size: 1.4rem; animation: coin-spin 3s ease-in-out infinite; }
+  @keyframes coin-spin {
+    0%, 100% { transform: rotateY(0) scale(1); }
+    50% { transform: rotateY(180deg) scale(1.15); }
+  }
+
+  .xp-bar-wrap { flex: 1; margin: 0 20px; }
+  .xp-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; text-align: center; }
+  .xp-bar { height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+  .xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--blue), var(--green), var(--purple));
+    background-size: 300% 100%;
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: xp-shimmer 2.5s linear infinite;
+    position: relative;
+  }
+  .xp-fill.xp-burst::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 20px var(--green);
+    animation: xp-glow 0.6s ease;
+  }
+  @keyframes xp-shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+  @keyframes xp-glow {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  .screen { display: none; }
+  .screen.active {
+    display: block;
+    animation: screen-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes screen-in {
+    from { opacity: 0; transform: translateY(24px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .home-title {
+    text-align: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    color: var(--accent);
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(249,199,79,0.4);
+    animation: title-bob 2.5s ease-in-out infinite;
+  }
+  @keyframes title-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .home-sub { text-align: center; color: var(--muted); margin-bottom: 32px; font-size: 1.1rem; }
+
+  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+
+  .topic-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 24px 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .topic-card:hover {
+    transform: translateY(-8px) scale(1.04) rotate(-0.5deg);
+    border-color: var(--accent);
+    box-shadow: 0 20px 50px rgba(249,199,79,0.35), 0 0 30px rgba(249,199,79,0.15);
+  }
+  .topic-card:hover::before { opacity: 1; }
+  .topic-card:active { transform: translateY(-2px) scale(0.98); }
+  .topic-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 40%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    transform: skewX(-20deg);
+    animation: card-shine 4s ease-in-out infinite;
+  }
+  @keyframes card-shine {
+    0%, 100% { left: -60%; }
+    50% { left: 120%; }
+  }
+  .topic-emoji {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    display: block;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .topic-card:hover .topic-emoji { transform: scale(1.2) rotate(8deg); animation: emoji-wiggle 0.5s ease; }
+  @keyframes emoji-wiggle {
+    0%, 100% { transform: scale(1.2) rotate(8deg); }
+    50% { transform: scale(1.3) rotate(-8deg); }
+  }
+  .topic-name { font-weight: 800; font-size: 1rem; line-height: 1.3; }
+  .topic-progress { margin-top: 10px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; }
+  .topic-progress-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--green), var(--blue)); transition: width 0.5s ease; }
+  .topic-score { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+  .shop-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--accent); text-align: center; margin-bottom: 24px; }
+  .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+  .shop-item {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .shop-item:hover:not(.owned) { border-color: var(--coin); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(255,215,0,0.2); }
+  .shop-item.owned { opacity: 0.6; cursor: default; }
+  .shop-item.owned:has(.equip-btn) {
+    opacity: 1;
+    cursor: default;
+    border-color: rgba(255,255,255,0.15);
+  }
+  .shop-item .item-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+  .shop-item .item-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 8px; }
+  .shop-item .item-price {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(255,215,0,0.15); border: 1px solid var(--coin); border-radius: 20px;
+    padding: 4px 12px; font-size: 0.85rem; font-weight: 700; color: var(--coin);
+  }
+  .shop-item.owned .item-price { background: rgba(67,233,123,0.15); border-color: var(--green); color: var(--green); }
+
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .quiz-topic-title { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: var(--blue); }
+  .progress-dots { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.3s ease; }
+  .dot.done {
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+    animation: dot-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .dot.active {
+    background: var(--accent);
+    transform: scale(1.5);
+    box-shadow: 0 0 14px var(--accent);
+    animation: dot-pulse 1s ease infinite;
+  }
+  .dot.wrong {
+    background: var(--red);
+    animation: dot-shake 0.4s ease;
+  }
+  @keyframes dot-pop {
+    0% { transform: scale(0.5); }
+    60% { transform: scale(1.6); }
+    100% { transform: scale(1); }
+  }
+  @keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 8px var(--accent); }
+    50% { box-shadow: 0 0 20px var(--accent), 0 0 30px rgba(249,199,79,0.4); }
+  }
+  @keyframes dot-shake {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.3) translateX(-3px); }
+    75% { transform: scale(1.3) translateX(3px); }
+  }
+
+  .question-box {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 28px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  .question-box.q-enter {
+    animation: q-slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .question-box.win-glow {
+    border-color: var(--green);
+    box-shadow: 0 0 40px rgba(67,233,123,0.35), inset 0 0 30px rgba(67,233,123,0.05);
+    animation: win-box-pulse 0.6s ease;
+  }
+  .question-box.lose-glow {
+    border-color: var(--red);
+    box-shadow: 0 0 30px rgba(244,75,127,0.25);
+  }
+  @keyframes q-slide-in {
+    from { opacity: 0; transform: translateX(30px) scale(0.96); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+  }
+  @keyframes win-box-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.01); }
+  }
+
+  .question-type-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    background: rgba(255,255,255,0.1); border-radius: 20px; padding: 4px 12px;
+    width: fit-content; color: var(--muted);
+  }
+  .question-text { font-size: 1.25rem; font-weight: 700; line-height: 1.5; }
+
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width: 500px) { .options-grid { grid-template-columns: 1fr; } }
+
+  .option-btn {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    line-height: 1.4;
+  }
+  .option-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); border-color: var(--accent); transform: scale(1.02); }
+  .option-btn.correct {
+    background: rgba(67,233,123,0.25);
+    border-color: var(--green);
+    color: var(--green);
+    animation: correct-burst 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 25px rgba(67,233,123,0.4);
+  }
+  .option-btn.wrong {
+    background: rgba(244,75,127,0.25);
+    border-color: var(--red);
+    color: var(--red);
+    animation: shake 0.45s ease;
+    box-shadow: 0 0 15px rgba(244,75,127,0.3);
+  }
+  @keyframes correct-burst {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.08); }
+    60% { transform: scale(0.98); }
+    100% { transform: scale(1); }
+  }
+  .option-btn.reveal { background: rgba(67,233,123,0.1); border-color: var(--green); color: var(--green); }
+  @keyframes pulse-green { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
+  .input-answer {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+    min-height: 80px;
+  }
+  .input-answer:focus { border-color: var(--accent); }
+
+  .input-ai-panel {
+    margin-top: 10px;
+    padding: 14px;
+    background: rgba(167,139,250,0.1);
+    border: 1px solid rgba(167,139,250,0.35);
+    border-radius: 14px;
+  }
+  .input-ai-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--purple);
+    margin-bottom: 8px;
+  }
+  .input-ai-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .input-ai-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .kw-chip {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    transition: all 0.25s ease;
+  }
+  .kw-chip.matched {
+    background: rgba(67,233,123,0.2);
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .kw-chip.matched-fuzzy {
+    background: rgba(249,199,79,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .input-ai-status {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .input-ai-status.ready { color: var(--green); }
+
+  .submit-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #1a1200;
+    border: none;
+    border-radius: 16px;
+    padding: 14px 28px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .submit-btn:hover { transform: scale(1.06); box-shadow: 0 8px 28px rgba(249,199,79,0.45); }
+  .submit-btn:active:not(:disabled) { transform: scale(0.95); }
+  .submit-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+  .feedback-box { border-radius: 16px; padding: 16px 20px; margin-top: 12px; display: none; }
+  .feedback-box.correct-fb {
+    background: rgba(67,233,123,0.15);
+    border: 1px solid var(--green);
+    animation: fb-win 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 25px rgba(67,233,123,0.2);
+  }
+  .feedback-box.wrong-fb {
+    background: rgba(244,75,127,0.15);
+    border: 1px solid var(--red);
+    animation: fb-lose 0.4s ease;
+  }
+  @keyframes fb-win {
+    from { opacity: 0; transform: translateY(16px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes fb-lose {
+    from { opacity: 0; transform: translateX(-12px); }
+    30% { transform: translateX(8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .feedback-title { font-weight: 800; font-size: 1rem; margin-bottom: 6px; }
+  .feedback-box.correct-fb .feedback-title { color: var(--green); }
+  .feedback-box.wrong-fb .feedback-title { color: var(--red); }
+  .feedback-detail { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+
+  .next-btn {
+    background: var(--purple); color: white; border: none; border-radius: 16px;
+    padding: 12px 28px; font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+    cursor: pointer; margin-top: 12px; transition: all 0.2s ease; display: none;
+  }
+  .next-btn:hover { background: #c4b5fd; transform: scale(1.04); }
+  .next-btn.visible {
+    display: block;
+    animation: next-glow-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes next-glow-in {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); box-shadow: 0 0 20px rgba(167,139,250,0.4); }
+  }
+
+  /* ---- ORDER / SORT styles ---- */
+  .order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    user-select: none;
+  }
+
+  .order-item {
+    background: rgba(255,255,255,0.07);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: grab;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.15s, border-color 0.15s, transform 0.15s, opacity 0.15s;
+    touch-action: none;
+  }
+  .order-item:active { cursor: grabbing; }
+  .order-item.drag-over-top { border-top: 3px solid var(--accent); }
+  .order-item.drag-over-bot { border-bottom: 3px solid var(--accent); }
+  .order-item.dragging-src { opacity: 0.35; background: rgba(167,139,250,0.15); }
+  .order-item:hover:not(.dragging-src) { border-color: var(--purple); background: rgba(167,139,250,0.12); }
+  .order-item.correct-order { border-color: var(--green); background: rgba(67,233,123,0.12); color: var(--green); }
+  .order-item.wrong-order  { border-color: var(--red);   background: rgba(244,75,127,0.12);  color: var(--red); }
+
+  .order-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--accent);
+    min-width: 24px;
+    text-align: center;
+  }
+  .drag-hint { font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 6px; }
+
+  /* Results */
+  .results-box {
+    background: var(--card);
+    border-radius: 28px;
+    padding: 40px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: results-box-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .results-box.perfect {
+    border-color: var(--coin);
+    box-shadow: 0 0 60px rgba(255,215,0,0.3);
+    animation: results-box-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), results-rainbow 3s linear infinite;
+  }
+  @keyframes results-box-in {
+    from { opacity: 0; transform: scale(0.85) rotate(-2deg); }
+    to { opacity: 1; transform: scale(1) rotate(0); }
+  }
+  @keyframes results-rainbow {
+    0%, 100% { box-shadow: 0 0 50px rgba(255,215,0,0.4); }
+    33% { box-shadow: 0 0 50px rgba(67,233,123,0.4); }
+    66% { box-shadow: 0 0 50px rgba(167,139,250,0.4); }
+  }
+  .results-emoji {
+    font-size: 5rem;
+    margin-bottom: 16px;
+    display: block;
+    animation: bounce 0.6s ease infinite;
+  }
+  .results-emoji.mega-bounce { animation: mega-bounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
+  @keyframes bounce { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.15) rotate(5deg); } }
+  @keyframes mega-bounce {
+    0%, 100% { transform: scale(1) rotate(-5deg); }
+    50% { transform: scale(1.35) rotate(5deg); }
+  }
+  .results-title { font-family: 'Fredoka One', cursive; font-size: 2rem; margin-bottom: 8px; }
+  .results-score {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--accent);
+    font-family: 'Fredoka One', cursive;
+    margin: 16px 0;
+    animation: score-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+  }
+  @keyframes score-pop {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .coins-earned {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 1.5rem; font-weight: 800; color: var(--coin);
+    background: rgba(255,215,0,0.15); border: 2px solid var(--coin); border-radius: 30px; padding: 10px 24px;
+    margin-bottom: 24px; animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+  }
+  @keyframes pop { from{transform:scale(0)} to{transform:scale(1)} }
+  .results-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.1); color: var(--text); border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 16px; padding: 12px 24px; font-family: 'Fredoka One', cursive; font-size: 1rem;
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.15); border-color: var(--blue); }
+
+  .nav-tabs { display: flex; gap: 8px; margin-bottom: 24px; background: rgba(255,255,255,0.05); border-radius: 16px; padding: 6px; }
+  .nav-tab {
+    flex: 1; padding: 10px; border-radius: 12px; border: none; background: transparent;
+    color: var(--muted); font-family: 'Fredoka One', cursive; font-size: 1rem; cursor: pointer; transition: all 0.2s ease;
+  }
+  .nav-tab.active {
+    background: var(--card);
+    color: var(--accent);
+    box-shadow: 0 4px 16px rgba(249,199,79,0.25);
+    animation: tab-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes tab-pop {
+    from { transform: scale(0.92); }
+    to { transform: scale(1); }
+  }
+
+  .coin-burst {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 1.5rem;
+    animation: burst 1.2s ease forwards;
+  }
+  .coin-burst.star { font-size: 1.2rem; animation: burst-star 1s ease forwards; }
+  .coin-burst.xp { color: var(--purple); font-size: 1.1rem; font-weight: 800; animation: burst 1s ease forwards; }
+  @keyframes burst {
+    0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(-100px) scale(1.8) rotate(360deg); }
+  }
+  @keyframes burst-star {
+    0% { opacity: 1; transform: scale(0) rotate(0); }
+    50% { opacity: 1; transform: scale(1.5) rotate(180deg); }
+    100% { opacity: 0; transform: scale(0.5) rotate(360deg) translateY(-60px); }
+  }
+
+  .streak-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(248,150,30,0.25);
+    border: 1px solid var(--accent2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent2);
+    animation: streak-fire 0.8s ease infinite alternate;
+  }
+  .streak-badge.hot {
+    background: linear-gradient(90deg, rgba(255,100,0,0.4), rgba(255,215,0,0.3));
+    border-color: #ff6b00;
+    color: #ffd700;
+    box-shadow: 0 0 20px rgba(255,107,0,0.5);
+    animation: streak-fire 0.4s ease infinite alternate;
+  }
+  @keyframes streak-fire {
+    from { transform: scale(1); box-shadow: 0 0 8px rgba(248,150,30,0.4); }
+    to { transform: scale(1.08); box-shadow: 0 0 22px rgba(255,107,0,0.6); }
+  }
+
+  .shop-item.buy-flash { animation: shop-buy 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes shop-buy {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.15); border-color: var(--green); box-shadow: 0 0 40px rgba(67,233,123,0.5); }
+    100% { transform: scale(1); }
+  }
+
+  .toast-fx {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 14px 28px;
+    font-weight: 800;
+    z-index: 10003;
+    animation: toast-pop 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4), 0 0 20px rgba(249,199,79,0.2);
+  }
+  @keyframes toast-pop {
+    0% { opacity: 0; transform: translateX(-50%) scale(0.5) translateY(20px); }
+    12% { opacity: 1; transform: translateX(-50%) scale(1.05) translateY(0); }
+    85% { opacity: 1; transform: translateX(-50%) scale(1) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) scale(0.9) translateY(-10px); }
+  }
+
+  header { animation: header-float 6s ease-in-out infinite; }
+  @keyframes header-float {
+    0%, 100% { box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    50% { box-shadow: 0 8px 35px rgba(167,139,250,0.15); }
+  }
+
+  .inventory-section { margin-top: 24px; text-align: center; }
+  .inventory-title { font-family: 'Fredoka One', cursive; font-size: 1.2rem; color: var(--blue); margin-bottom: 12px; }
+  .inventory-items { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .inventory-item {
+    font-size: 2rem;
+    background: rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 8px 12px;
+    transition: transform 0.2s;
+  }
+  .inventory-item:hover { transform: scale(1.2) rotate(-5deg); }
+
+  .shop-effect {
+    font-size: 0.7rem;
+    color: var(--green);
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .shop-stack {
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .powerup-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    border: 1px dashed rgba(255,255,255,0.15);
+    min-height: 48px;
+    align-items: center;
+  }
+  .powerup-bar.empty { justify-content: center; color: var(--muted); font-size: 0.85rem; }
+  .powerup-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(167,139,250,0.2);
+    border: 2px solid var(--purple);
+    border-radius: 12px;
+    padding: 8px 12px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .powerup-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(167,139,250,0.35);
+  }
+  .powerup-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .powerup-btn .pu-count {
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+  }
+  .powerup-auto {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 6px 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+  }
+  .passive-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .passive-chip {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(255,215,0,0.12);
+    border: 1px solid rgba(255,215,0,0.35);
+    color: var(--coin);
+  }
+  .robot-helper {
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: rgba(78,205,196,0.12);
+    border: 1px solid var(--blue);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--blue);
+  }
+  .hint-reveal {
+    margin-bottom: 10px;
+    padding: 12px 14px;
+    background: rgba(249,199,79,0.15);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    animation: slideUp 0.3s ease;
+  }
+  .dot.skipped { background: var(--muted); box-shadow: none; }
+
+  /* ---- Cursor cosmetics ---- */
+  body.bc-custom-cursor,
+  body.bc-custom-cursor a,
+  body.bc-custom-cursor button,
+  body.bc-custom-cursor .topic-card,
+  body.bc-custom-cursor textarea,
+  body.bc-custom-cursor input {
+    cursor: none !important;
+  }
+
+  #cursor-trail-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100004;
+    overflow: hidden;
+  }
+
+  .cursor-trail-dot {
+    position: fixed;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: trail-fade 0.9s ease-out forwards;
+    font-size: 0.75rem;
+    line-height: 1;
+    will-change: opacity, transform;
+  }
+
+  .cursor-trail-dot.trail-glow {
+    border-radius: 50%;
+    animation: trail-fade-glow 1s ease-out forwards;
+  }
+
+  .cursor-trail-dot.trail-emoji {
+    animation: trail-fade-emoji 1.1s ease-out forwards;
+  }
+
+  .cursor-trail-dot.dot-circle {
+    border-radius: 50%;
+  }
+
+  .trail-theme-fire.trail-glow { background: #ff6b00 !important; }
+  .trail-theme-fire.trail-emoji { filter: drop-shadow(0 0 10px rgba(255,100,0,0.9)) drop-shadow(0 0 20px rgba(255,50,0,0.5)); }
+
+  .trail-theme-coin.trail-glow { background: #ffd700 !important; }
+  .trail-theme-coin.trail-emoji { filter: drop-shadow(0 0 10px rgba(255,215,0,0.85)); }
+
+  .trail-theme-rocket.trail-glow { background: #4ecdc4 !important; }
+  .trail-theme-rocket.trail-emoji { filter: drop-shadow(0 0 10px rgba(78,205,196,0.9)); }
+
+  .trail-theme-brain.trail-glow { background: #f44b7f !important; }
+  .trail-theme-brain.trail-emoji { filter: drop-shadow(0 0 10px rgba(244,75,127,0.8)); }
+
+  .trail-theme-diamond.trail-glow { background: #a78bfa !important; }
+  .trail-theme-diamond.trail-emoji { filter: drop-shadow(0 0 12px rgba(167,139,250,0.95)); }
+
+  .trail-theme-lightning.trail-glow { background: #f9c74f !important; }
+  .trail-theme-lightning.trail-emoji { filter: drop-shadow(0 0 12px rgba(255,230,100,1)); }
+
+  @keyframes trail-fade {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.15); }
+  }
+
+  @keyframes trail-fade-glow {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    70% { opacity: var(--trail-start, 0.3); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.1); }
+  }
+
+  @keyframes trail-fade-emoji {
+    0% { transform: translate(-50%, -50%) scale(0.9); opacity: var(--trail-start, 0.35); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.25) translateY(6px); }
+  }
+
+  #cursor-root.glow-fire { filter: drop-shadow(0 0 8px rgba(255,100,0,0.7)) drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
+  #cursor-root.glow-coin { filter: drop-shadow(0 0 8px rgba(255,215,0,0.6)) drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
+  #cursor-root.glow-rocket { filter: drop-shadow(0 0 8px rgba(78,205,196,0.65)) drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
+  #cursor-root.glow-brain { filter: drop-shadow(0 0 8px rgba(244,75,127,0.55)) drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
+  #cursor-root.glow-diamond { filter: drop-shadow(0 0 10px rgba(167,139,250,0.75)) drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
+  #cursor-root.glow-lightning { filter: drop-shadow(0 0 10px rgba(255,230,80,0.85)) drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
+
+  #cursor-root {
+    position: fixed;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    z-index: 100005;
+    will-change: transform;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45));
+  }
+
+  #cursor-root.hidden { display: none; }
+
+  .cursor-pointer-emoji {
+    font-size: 1.6rem;
+    line-height: 1;
+    display: block;
+    transform: translate(-20%, -20%);
+  }
+
+  .cursor-hat-emoji {
+    position: absolute;
+    left: 50%;
+    top: -26px;
+    transform: translateX(-50%);
+    font-size: 1.35rem;
+    line-height: 1;
+    animation: hat-bob 1.2s ease-in-out infinite;
+  }
+
+  @keyframes hat-bob {
+    0%, 100% { transform: translateX(-50%) rotate(-6deg); }
+    50% { transform: translateX(-50%) rotate(6deg) translateY(-3px); }
+  }
+
+  .shop-section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.35rem;
+    color: var(--blue);
+    text-align: center;
+    margin: 28px 0 8px;
+  }
+
+  .shop-item.equipped {
+    border-color: var(--green) !important;
+    box-shadow: 0 0 24px rgba(67,233,123,0.25);
+  }
+
+  .shop-item .equip-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.3);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #1a1200;
+    box-shadow: 0 4px 18px rgba(249,199,79,0.4), inset 0 1px 0 rgba(255,255,255,0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+  }
+
+  .shop-item .equip-btn:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 8px 28px rgba(249,199,79,0.55), inset 0 1px 0 rgba(255,255,255,0.4);
+    filter: brightness(1.08);
+  }
+
+  .shop-item .equip-btn:active {
+    transform: scale(0.98);
+  }
+
+  .shop-item .equip-btn.on {
+    background: linear-gradient(135deg, #5ef9a8, var(--green));
+    color: #053d1f;
+    border-color: rgba(67,233,123,0.7);
+    box-shadow: 0 4px 18px rgba(67,233,123,0.45), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  .shop-item .equip-btn.on:hover {
+    box-shadow: 0 8px 28px rgba(67,233,123,0.55);
+    filter: brightness(1.06);
+  }
+
+  .shop-item .equip-btn.unequip {
+    background: rgba(244,75,127,0.18);
+    color: #ffb3cc;
+    border: 2px solid rgba(244,75,127,0.5);
+    box-shadow: 0 2px 12px rgba(244,75,127,0.2);
+    font-size: 0.92rem;
+    text-shadow: none;
+  }
+
+  .shop-item .equip-btn.unequip:hover {
+    background: rgba(244,75,127,0.28);
+    box-shadow: 0 4px 16px rgba(244,75,127,0.35);
+    filter: none;
+  }
+
+  .cursor-loadout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 16px;
+    padding: 14px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .cursor-loadout-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: var(--card);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    #confetti-canvas { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="ambient-particles"></div>
+<canvas id="confetti-canvas"></canvas>
+<div id="flash-overlay"></div>
+<div id="cursor-trail-layer"></div>
+<div id="cursor-root" class="hidden" aria-hidden="true">
+  <span class="cursor-hat-emoji" id="cursorHat" style="display:none"></span>
+  <span class="cursor-pointer-emoji" id="cursorPointer">🖱️</span>
+</div>
+<div class="wrapper">
+
+  <header>
+    <div class="logo">Brain<span>Coins</span></div>
+    <div class="xp-bar-wrap">
+      <div class="xp-label" id="xpLabel">Nivo 1 – 0 XP</div>
+      <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+    </div>
+    <div class="coin-display">
+      <span class="coin-icon">🪙</span>
+      <span id="coinCount">0</span>
+    </div>
+  </header>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('home')">🏠 Teme</button>
+    <button class="nav-tab" onclick="showTab('shop')">🛒 Trgovina</button>
+    <button class="nav-tab" onclick="showTab('stats')">📊 Statistike</button>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="home-title">Izberi temo! 🚀</div>
+    <div class="home-sub">Igraj, učis in zaslužiš kovance!</div>
+    <div class="topics-grid" id="topicsGrid"></div>
+  </div>
+
+  <!-- SHOP -->
+  <div class="screen" id="screen-shop">
+    <div class="shop-title">🛒 Trgovina pripomočkov</div>
+    <p style="text-align:center;color:var(--muted);font-size:0.9rem;margin:-12px 0 20px;max-width:520px;margin-left:auto;margin-right:auto">
+      Porabniški predmeti uporabi med kvizom. Trajni bonusi delujejo vedno.
+    </p>
+    <div class="shop-grid" id="shopGrid"></div>
+
+    <div class="shop-section-title">🖱️ Miška – kazalec, sled & klobček</div>
+    <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:12px">
+      Kupi in obleci. Spremembe vidiš takoj po celotni strani.
+    </p>
+    <div class="cursor-loadout" id="cursorLoadout"></div>
+    <div class="shop-grid" id="cursorShopGrid"></div>
+
+    <div class="inventory-section">
+      <div class="inventory-title">Moja zbirka 🎒</div>
+      <div class="inventory-items" id="inventoryItems"></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="screen" id="screen-stats">
+    <div class="shop-title">📊 Moje statistike</div>
+    <div id="statsContent"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-header">
+      <div class="quiz-topic-title" id="quizTopicTitle"></div>
+      <div class="progress-dots" id="progressDots"></div>
+    </div>
+
+    <div class="question-box" id="questionBox">
+      <div class="question-type-badge" id="questionBadge">⚡ Vprašanje</div>
+      <div class="question-text" id="questionText"></div>
+      <div id="questionContent"></div>
+      <div class="feedback-box" id="feedbackBox">
+        <div class="feedback-title" id="feedbackTitle"></div>
+        <div class="feedback-detail" id="feedbackDetail"></div>
+      </div>
+    </div>
+
+    <div id="passiveStrip" class="passive-strip" style="display:none"></div>
+    <div id="powerupBar" class="powerup-bar empty">Kupi pripomočke v trgovini 🛒</div>
+
+    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+      <button class="submit-btn" id="submitBtn" onclick="submitAnswer()" style="display:none">
+        ✅ Preveri odgovor
+      </button>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+        Naslednje vprašanje ➡️
+      </button>
+      <div class="streak-badge" id="streakBadge" style="display:none">🔥 <span id="streakNum">0</span> zapored!</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results">
+    <div class="results-box">
+      <span class="results-emoji" id="resultsEmoji">🎉</span>
+      <div class="results-title" id="resultsTitle">Odlično!</div>
+      <div class="results-score" id="resultsScore">8/10</div>
+      <div class="coins-earned" id="coinsEarned">🪙 +15 kovancev!</div>
+      <div class="results-actions">
+        <button class="submit-btn" onclick="restartQuiz()">🔄 Igraj znova</button>
+        <button class="btn-secondary" onclick="goHome()">🏠 Nazaj na teme</button>
+        <button class="btn-secondary" onclick="showTab('shop')">🛒 Pojdi v trgovino</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ========== DATA ==========
+const TOPICS = [
+  {
+    id: 'creativity',
+    name: 'Ustvarjalnost + Faze',
+    emoji: '🎨',
+    color: '#f9c74f',
+    questions: [
+      {
+        type: 'mcq',
+        q: 'Kaj je USTVARJALNOST?',
+        options: [
+          'Sposobnost razmišljanja na izviren in nov način',
+          'Sposobnost pomnjenja velikih količin podatkov',
+          'Hitro reševanje matematičnih nalog',
+          'Kopiranje tujih idej in njihovo izboljšanje'
+        ],
+        correct: 0,
+        explain: 'Ustvarjalnost = originalno in novo razmišljanje. Temelji na radovednosti in divergentnem mišljenju. Rezultat so originalne in uporabne rešitve.'
+      },
+      {
+        type: 'input',
+        q: 'Na čem temelji ustvarjalnost? (napiši oba temelja)',
+        keywords: ['radovednost', 'divergent'],
+        minMatches: 2,
+        explain: 'Temelji na radovednosti in divergentnem mišljenju – razmišljanje v več smereh hkrati.'
+      },
+      {
+        type: 'input',
+        q: 'Kaj je rezultat ustvarjalnega razmišljanja?',
+        keywords: ['original', 'uporabn', 'rešitv'],
+        minMatches: 2,
+        explain: 'Rezultat so originalne in uporabne rešitve.'
+      },
+      {
+        type: 'mcq',
+        q: '»Bogastvo idej« pri ustvarjalnosti pomeni:',
+        options: ['Fluentnost – veliko idej naenkrat', 'Uporabnost rešitev', 'Originalnost', 'Miselno prožnost'],
+        correct: 0,
+        explain: 'Fluentnost = bogastvo idej. Originalnost = novost. Prožnost = fleksibilnost. Uporabnost = praktična vrednost.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE 4 značilnosti ustvarjalnosti:',
+        keywords: ['originalnost', 'fleksibilnost', 'fluentnost', 'prožnost', 'bogastvo', 'uporabnost'],
+        minMatches: 4,
+        explain: 'Vse 4: originalnost, miselna prožnost (fleksibilnost), bogastvo idej (fluentnost), uporabnost.'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj pomeni PREPARACIJA v ustvarjalnem procesu?',
+        options: [
+          'Zbiranje informacij in analiza problema',
+          'Problem začasno odložimo',
+          '»Aha« trenutek – rojstvo ideje',
+          'Preverjanje in izvedba rešitve'
+        ],
+        correct: 0,
+        explain: 'Preparacija = zbiranje informacij in analiza problema. Prva faza!'
+      },
+      {
+        type: 'input',
+        q: 'Kaj se dogaja v fazi FRUSTRACIJA?',
+        keywords: ['težav', 'reševanj', 'problem'],
+        minMatches: 2,
+        explain: 'Frustracija = težave pri reševanju problema. Običajno po intenzivni preparaciji.'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj je INKUBACIJA v ustvarjalnem procesu?',
+        options: [
+          'Problem začasno odložimo',
+          'Intenzivno rešujemo problem',
+          'Zbiramo informacije o problemu',
+          'Testiramo našo rešitev'
+        ],
+        correct: 0,
+        explain: 'Inkubacija = problem začasno odložimo. Možgani nadaljujejo z delom podzavestno!'
+      },
+      {
+        type: 'mcq',
+        q: 'V kateri fazi se zgodi »aha« trenutek – rojstvo ideje?',
+        options: ['Inkubacija', 'Preparacija', 'Iluminacija', 'Verifikacija'],
+        correct: 2,
+        explain: 'Iluminacija je faza »aha« trenutka – ko ideja nenadoma vznikne!'
+      },
+      {
+        type: 'input',
+        q: 'Kaj počnemo v fazi VERIFIKACIJA?',
+        keywords: ['prever', 'izved', 'rešitv'],
+        minMatches: 2,
+        explain: 'Verifikacija = preverjanje in izvedba rešitve. Zadnja faza!'
+      },
+      {
+        type: 'order',
+        q: 'Razvrsti 5 FAZ ustvarjalnega procesa po pravilnem vrstnem redu:',
+        items: ['Preparacija', 'Frustracija', 'Inkubacija', 'Iluminacija', 'Verifikacija'],
+        correctOrder: [0, 1, 2, 3, 4],
+        explain: 'Preparacija → Frustracija → Inkubacija → Iluminacija (»aha« trenutek!) → Verifikacija.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE 5 faz ustvarjalnega procesa (po vrsti ali naštej vse):',
+        keywords: ['preparacija', 'frustracija', 'inkubacija', 'iluminacija', 'verifikacija'],
+        minMatches: 5,
+        explain: 'Preparacija → Frustracija → Inkubacija → Iluminacija → Verifikacija.'
+      },
+      {
+        type: 'mcq',
+        q: 'Katera značilnost pomeni, da rešitev dejansko deluje v praksi?',
+        options: ['Uporabnost', 'Originalnost', 'Fluentnost', 'Frustracija'],
+        correct: 0,
+        explain: 'Uporabnost = rešitev je praktična in uporabna v resničnem življenju.'
+      },
+      {
+        type: 'input',
+        q: 'Razloži s svojimi besedami: kaj pomeni »miselna prožnost« pri ustvarjalnosti?',
+        keywords: ['fleksibil', 'prožn', 'spreminj', 'različn', 'pogled'],
+        minMatches: 2,
+        explain: 'Miselna prožnost (fleksibilnost) = zmožnost hitrega preklapljanja med različnimi pogledi in pristopi.'
+      }
+    ]
+  },
+  {
+    id: 'brainstorming',
+    name: 'Brainstorming in metode',
+    emoji: '💡',
+    color: '#4ecdc4',
+    questions: [
+      {
+        type: 'mcq',
+        q: 'Kakšen je GLAVNI CILJ brainstorminga?',
+        options: [
+          'Ustvariti čim več idej',
+          'Izbrati najboljšo idejo takoj',
+          'Kritizirati slabe ideje',
+          'Dokončati projekt v eni uri'
+        ],
+        correct: 0,
+        explain: 'Cilj brainstorminga je ustvariti čim več idej – količina je pomembnejša od kakovosti na začetku!'
+      },
+      {
+        type: 'mcq',
+        q: 'Katero je PRAVILO brainstorminga?',
+        options: [
+          'Kritika idej NI dovoljena',
+          'Vsaka ideja se takoj oceni',
+          'Samo vodja lahko daje ideje',
+          'Idej ni dovoljeno nadgrajevati'
+        ],
+        correct: 0,
+        explain: 'Brainstorming = brez kritike! Cilj je čim več idej. Ideje se nadgrajujejo. Sproščena atmosfera.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSAJ 3 pravila/principe brainstorminga:',
+        keywords: ['kritik', 'več idej', 'nadgraj', 'sproščen', 'atmosfer'],
+        minMatches: 3,
+        explain: 'Pravila: brez kritike, čim več idej, ideje se nadgrajujejo, sproščena atmosfera.'
+      },
+      {
+        type: 'mcq',
+        q: 'Katera je VLOGA VODJE pri brainstormingu?',
+        options: [
+          'Preprečuje kritiziranje in spodbuja sodelovanje',
+          'Izbira samo svoje ideje',
+          'Omeji število idej',
+          'Oceni vsako idejo takoj'
+        ],
+        correct: 0,
+        explain: 'Vodja: predstavi problem, spodbuja sodelovanje, preprečuje kritiziranje, skrbi za osredotočenost.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE 4 naloge vodje pri brainstormingu:',
+        keywords: ['predstav', 'problem', 'spodbuj', 'sodelovan', 'kritiz', 'osredotoč'],
+        minMatches: 4,
+        explain: 'Vodja: predstavi problem, spodbuja sodelovanje, preprečuje kritiziranje, skrbi za osredotočenost skupine.'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj pomeni metoda DO IT?',
+        options: [
+          'Opredeli problem → Ustvarjalno razmišljanje → Izbira rešitve → Nadgradnja',
+          'Definiraj, Organiziraj, Implementiraj, Testiraj',
+          'Diskutiraj, Opiši, Izpelji, Transformiraj',
+          'Delaj, Opazuj, Izboljšaj, Testiraj'
+        ],
+        correct: 0,
+        explain: 'DO IT: Opredeli problem → ustvarjalno razmišljanje → izbira najboljše rešitve → nadgradnja rešitve.'
+      },
+      {
+        type: 'input',
+        q: 'Razloži 4 korake metode DO IT (vsak korak na kratko):',
+        keywords: ['opredel', 'ustvarjal', 'izbir', 'nadgrad'],
+        minMatches: 4,
+        explain: 'DO IT: 1) Opredeli problem 2) Ustvarjalno razmišljanje 3) Izbira najboljše rešitve 4) Nadgradnja rešitve.'
+      },
+      {
+        type: 'mcq',
+        q: 'Metoda SIMPLEX ima koliko korakov izboljševanja?',
+        options: ['5', '6', '8', '10'],
+        correct: 2,
+        explain: 'SIMPLEX = 8 korakov izboljševanja. Napredna metoda za kreativno reševanje problemov.'
+      },
+      {
+        type: 'mcq',
+        q: 'Metoda 635 pomeni:',
+        options: [
+          '6 oseb, 3 ideje, 5 minut – vrsta brainwritinga',
+          '6 idej v 3 minutah za 5 oseb',
+          '6 ur dela za 3 projekte',
+          'Metoda debatiranja z 66 pravili'
+        ],
+        correct: 0,
+        explain: 'Metoda 635 = brainwriting: 6 oseb piše 3 ideje v 5 minutah, nato list preide naprej.'
+      },
+      {
+        type: 'input',
+        q: 'Kaj je BRAINWRITING? (napiši s svojimi besedami)',
+        keywords: ['piš', 'idej', 'list', 'papir', 'tiho', 'zapis'],
+        minMatches: 2,
+        explain: 'Brainwriting = ideje se zapisujejo na papir (ne govorijo na glas). Tiho, pisno ustvarjanje idej.'
+      },
+      {
+        type: 'mcq',
+        q: 'Metoda PROVOKACIJE pri ustvarjanju idej:',
+        options: [
+          'Uporablja nenavadna, provokativna vprašanja za sprožitev novih idej',
+          'Prepoveduje vse nenavadne ideje',
+          'Samo za psihološke raziskave',
+          'Ista kot brainstorming brez vodje'
+        ],
+        correct: 0,
+        explain: 'Metoda provokacije = nenavadna vprašanja »kaj če...« za prebijanje ustaljenih vzorcev mišljenja.'
+      },
+      {
+        type: 'mcq',
+        q: 'RAZPRAVA 66 je:',
+        options: [
+          'Metoda strukturirane razprave za pridobivanje idej',
+          '66-minutna pavza med delom',
+          '66 članov v skupini',
+          '66 različnih temperamentov'
+        ],
+        correct: 0,
+        explain: 'Razprava 66 = strukturirana metoda razprave za generiranje in izboljšanje idej.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE metode za pridobivanje idej iz gradiva (vključno z brainstormingom):',
+        keywords: ['brainstorm', 'do it', 'simplex', 'provokac', 'brainwriting', '635', 'razprava', '66'],
+        minMatches: 6,
+        explain: 'Metode: Brainstorming, DO IT, SIMPLEX, Metoda provokacije, Brainwriting, Metoda 635, Razprava 66.'
+      },
+      {
+        type: 'input',
+        q: 'Zakaj je pri brainstormingu pomembna SPROŠČENA ATMOSFERA?',
+        keywords: ['sproščen', 'kreativ', 'idej', 'strah', 'kritik', 'svobod'],
+        minMatches: 2,
+        explain: 'Sproščena atmosfera omogoča svobodno izražanje – ljudje ne bojijo kritike in dajejo več idej.'
+      },
+      {
+        type: 'mcq',
+        q: 'Pri brainstormingu ideje:',
+        options: [
+          'Se nadgrajujejo (gradiš na idejah drugih)',
+          'Se takoj zavržejo, če niso popolne',
+          'Sme dajati samo vodja',
+          'Se ne smejo spreminjati'
+        ],
+        correct: 0,
+        explain: 'Ideje se nadgrajujejo – »Da, in...« namesto »Ne, ampak...«!'
+      }
+    ]
+  },
+  {
+    id: 'personality',
+    name: 'Osebnost, Temperament, Značaj',
+    emoji: '👤',
+    color: '#a78bfa',
+    questions: [
+      {
+        type: 'mcq',
+        q: 'Kaj je OSEBNOST?',
+        options: [
+          'Edinstvena celota telesnih, duševnih in vedenjskih značilnosti',
+          'Samo podedovane lastnosti človeka',
+          'Moralne lastnosti, ki jih usvojimo v otroštvu',
+          'Način reagiranja na čustva'
+        ],
+        correct: 0,
+        explain: 'Osebnost = edinstvena celota telesnih, duševnih in vedenjskih značilnosti. Oblikuje se vse življenje!'
+      },
+      {
+        type: 'input',
+        q: 'Kaj vse sestavlja osebnost? (naštej 3 sestavine)',
+        keywords: ['telesn', 'duševn', 'vedenjsk'],
+        minMatches: 3,
+        explain: 'Osebnost = telesne + duševne + vedenjske značilnosti. Edinstvena celota!'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj je TEMPERAMENT?',
+        options: [
+          'Način čustvovanja in reagiranja',
+          'Moralne lastnosti človeka',
+          'Telesna moč in vzdržljivost',
+          'Znanje in izobrazba'
+        ],
+        correct: 0,
+        explain: 'Temperament = način čustvovanja in reagiranja. Močan vpliv dednosti!'
+      },
+      {
+        type: 'mcq',
+        q: 'Kolerik je tip temperamenta, ki je:',
+        options: [
+          'Energičen, odločen, hitro razdražljiv',
+          'Miren, stabilen, zanesljiv',
+          'Družaben, optimističen, zgovoren',
+          'Občutljiv, zadržan, pesimističen'
+        ],
+        correct: 0,
+        explain: 'Kolerik = energičen, odločen, hitro razdražljiv.'
+      },
+      {
+        type: 'mcq',
+        q: 'Kateri temperament je "Družaben, optimističen, zgovoren"?',
+        options: ['Sangvinik', 'Kolerik', 'Flegmatik', 'Melanholik'],
+        correct: 0,
+        explain: 'Sangvinik = družaben, optimističen, zgovoren.'
+      },
+      {
+        type: 'mcq',
+        q: 'Flegmatik je:',
+        options: ['Miren, stabilen, zanesljiv', 'Energičen in impulziven', 'Pesimističen in zadržan', 'Optimističen in zgovoren'],
+        correct: 0,
+        explain: 'Flegmatik = miren, stabilen, zanesljiv.'
+      },
+      {
+        type: 'mcq',
+        q: 'Melanholik je tip temperamenta, ki je:',
+        options: [
+          'Občutljiv, zadržan, pesimističen',
+          'Energičen, odločen, hitro razdražljiv',
+          'Družaben, optimističen, zgovoren',
+          'Miren, stabilen, zanesljiv'
+        ],
+        correct: 0,
+        explain: 'Melanholik = občutljiv, zadržan, pesimističen.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE 4 tipe temperamenta in po eno lastnost vsakega:',
+        keywords: ['kolerik', 'sangvinik', 'flegmatik', 'melanholik'],
+        minMatches: 4,
+        explain: 'Kolerik (energičen), Sangvinik (družaben), Flegmatik (miren), Melanholik (občutljiv).'
+      },
+      {
+        type: 'input',
+        q: 'Opíši SANGVINIKA s 3 lastnostmi:',
+        keywords: ['družab', 'optimist', 'zgovor'],
+        minMatches: 3,
+        explain: 'Sangvinik = družaben, optimističen, zgovoren.'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj je ZNAČAJ v okviru osebnosti?',
+        options: [
+          'Moralne lastnosti človeka pod vplivom vzgoje',
+          'Prirojen način reagiranja na čustva',
+          'Telesne sposobnosti',
+          'Intelektualne sposobnosti'
+        ],
+        correct: 0,
+        explain: 'Značaj = moralne lastnosti (poštenost, delavnost, solidarnost). Oblikuje ga VZGOJA in okolje.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSAJ 3 primere lastnosti ZNAČAJA:',
+        keywords: ['pošten', 'delavn', 'solidarn'],
+        minMatches: 3,
+        explain: 'Primeri značaja: poštenost, delavnost, solidarnost.'
+      },
+      {
+        type: 'mcq',
+        q: 'Temperament ima MOČAN vpliv od:',
+        options: ['Dednosti (genetike)', 'Vzgoje', 'Okolja', 'Prijateljev'],
+        correct: 0,
+        explain: 'Temperament = dednost. Značaj = vzgoja in okolje.'
+      },
+      {
+        type: 'input',
+        q: 'Razloži razliko med TEMPERAMENTOM in ZNAČAJEM (kdo/kaj ju oblikuje?):',
+        keywords: ['dednost', 'vzgoj', 'čustv', 'moral'],
+        minMatches: 3,
+        explain: 'Temperament = prirojen način čustvovanja (dednost). Značaj = moralne lastnosti (vzgoja, okolje).'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE vrste SPOSOBNOSTI iz gradiva:',
+        keywords: ['telesn', 'duševn', 'inteligent', 'ustvarjal', 'spretnost'],
+        minMatches: 5,
+        explain: 'Sposobnosti: telesne, duševne, inteligentnost, ustvarjalnost, spretnosti.'
+      },
+      {
+        type: 'mcq',
+        q: 'Značaj se oblikuje predvsem pod vplivom:',
+        options: ['Vzgoje in okolja', 'Dednosti', 'Starosti', 'Temperamenta'],
+        correct: 0,
+        explain: 'Značaj = vzgoja + okolje. Temperament = dednost.'
+      },
+      {
+        type: 'input',
+        q: 'Kdaj in kako se oblikuje osebnost?',
+        keywords: ['življenj', 'celot', 'vse'],
+        minMatches: 2,
+        explain: 'Osebnost se oblikuje vse življenje – ni dokončana v otroštvu!'
+      }
+    ]
+  },
+  {
+    id: 'group',
+    name: 'Skupina in struktura',
+    emoji: '👥',
+    color: '#f8961e',
+    questions: [
+      {
+        type: 'mcq',
+        q: 'Kaj je SKUPINA v sociologiji?',
+        options: [
+          'Dve ali več oseb s skupnim ciljem in medsebojnim vplivom',
+          'Ena oseba, ki dela samostojno',
+          'Samo profesionalna ekipa na delovnem mestu',
+          'Vsaka množica ljudi na ulici'
+        ],
+        correct: 0,
+        explain: 'Skupina = 2+ oseb, skupen cilj, medsebojni vpliv. Vse tri sestavine so pomembne!'
+      },
+      {
+        type: 'input',
+        q: 'Kaj pomeni MEDSEBOJNI VPLIV v skupini? (razloži s svojimi besedami)',
+        keywords: ['vpliv', 'član', 'vedenj', 'odnos', 'interakc'],
+        minMatches: 2,
+        explain: 'Medsebojni vpliv = člani skupine vplivajo drug na drugega (vedenje, mnenja, odločitve).'
+      },
+      {
+        type: 'input',
+        q: 'Kdaj nastane SKUPINA? (naštej 3 pogoje)',
+        keywords: ['dve', 'več', 'cilj', 'vpliv', 'oseb'],
+        minMatches: 3,
+        explain: 'Skupina = 2+ oseb + skupen cilj + medsebojni vpliv.'
+      },
+      {
+        type: 'mcq',
+        q: 'MALA skupina ima:',
+        options: ['Do 30 članov', 'Do 10 članov', 'Nad 30 članov', 'Točno 5 članov'],
+        correct: 0,
+        explain: 'Mala skupina = do 30 članov. Velika skupina = nad 30 članov.'
+      },
+      {
+        type: 'mcq',
+        q: 'VELIKA skupina ima:',
+        options: ['Nad 30 članov', 'Do 30 članov', 'Točno 30 članov', 'Manj kot 5 članov'],
+        correct: 0,
+        explain: 'Velika skupina = nad 30 članov. Mala = do 30.'
+      },
+      {
+        type: 'input',
+        q: 'Koliko članov ima mala in koliko velika skupina?',
+        keywords: ['30', 'mala', 'velika', 'nad', 'do'],
+        minMatches: 3,
+        explain: 'Mala skupina = do 30 članov. Velika skupina = nad 30 članov.'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj NE spada v strukturo skupine?',
+        options: [
+          'Geografska lokacija članov',
+          'Odnosi med člani',
+          'Razporeditev moči',
+          'Komunikacija'
+        ],
+        correct: 0,
+        explain: 'Struktura skupine: odnosi, vloge in položaji, komunikacija, razporeditev moči.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE elemente STRUKTURE skupine:',
+        keywords: ['odnos', 'vlog', 'položaj', 'komunikac', 'moč'],
+        minMatches: 4,
+        explain: 'Struktura: odnosi med člani, vloge in položaji, komunikacija, razporeditev moči.'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj spada v STRUKTURO skupine?',
+        options: ['Razporeditev moči', 'Število delovnih ur', 'Višina plače', 'Starost članov'],
+        correct: 0,
+        explain: 'Struktura = odnosi, vloge, komunikacija, razporeditev moči.'
+      },
+      {
+        type: 'mcq',
+        q: 'Vloge in položaji v skupini pomenijo:',
+        options: [
+          'Kdo ima kakšno nalogo in kakšen status v skupini',
+          'Samo fizično razporeditev sedežev',
+          'Starost vsakega člana',
+          'Barvo oblačil članov'
+        ],
+        correct: 0,
+        explain: 'Vloge = funkcije v skupini (vodja, zapisovalec...). Položaji = hierarhija/status.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE 5 pomembnih lastnosti za delo v skupini:',
+        keywords: ['poštenost', 'prijaznost', 'delavnost', 'solidarnost', 'samozavest'],
+        minMatches: 5,
+        explain: '5 lastnosti: poštenost, prijaznost, delavnost, solidarnost, zdrava samozavest.'
+      },
+      {
+        type: 'input',
+        q: 'Zakaj je ZDRAVA SAMOZAVEST pomembna pri delu v skupini?',
+        keywords: ['samozavest', 'prispev', 'mnenj', 'aktivn', 'sodelovan'],
+        minMatches: 2,
+        explain: 'Zdrava samozavest omogoča aktivno sodelovanje – človek si upa izraziti mnenje, ne pa prevladati.'
+      },
+      {
+        type: 'mcq',
+        q: 'Komunikacija v strukturi skupine pomeni:',
+        options: [
+          'Način izmenjave informacij med člani',
+          'Samo pisno dopisovanje',
+          'Geografsko oddaljenost članov',
+          'Število članov v skupini'
+        ],
+        correct: 0,
+        explain: 'Komunikacija = kako in kako pogosto člani komunicirajo (formalno, neformalno).'
+      },
+      {
+        type: 'input',
+        q: 'Razloži, kaj pomeni RAZPOREDITEV MOČI v skupini:',
+        keywords: ['moč', 'vodja', 'odloč', 'vpliv', 'hierarh'],
+        minMatches: 2,
+        explain: 'Razporeditev moči = kdo ima odločilno moč, kdo vpliva na odločitve skupine.'
+      }
+    ]
+  },
+  {
+    id: 'motivation',
+    name: 'Motivacija, Potrebe in Stres',
+    emoji: '🎯',
+    color: '#f44b7f',
+    questions: [
+      {
+        type: 'mcq',
+        q: 'Kaj je MOTIVACIJA?',
+        options: [
+          'Sila, ki človeka spodbuja k dejavnosti',
+          'Nagrada za opravljeno delo',
+          'Občutek strahu pred neuspehom',
+          'Fiziološka potreba po hrani'
+        ],
+        correct: 0,
+        explain: 'Motivacija = sila, ki spodbuja dejavnost. Razlaga človekovo vedenje!'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj je MOTIV?',
+        options: [
+          'Notranja sila za dosego cilja',
+          'Zunanja nagrada',
+          'Stanje pomanjkanja',
+          'Odziv na stresorje'
+        ],
+        correct: 0,
+        explain: 'Motiv = notranja sila za dosego cilja. Motivacija = širši pojem spodbujanja.'
+      },
+      {
+        type: 'input',
+        q: 'Razloži razliko med MOTIVACIJO, MOTIVOM in POTREBO:',
+        keywords: ['spodbud', 'cilj', 'pomanjkan', 'neravnoves', 'napetost'],
+        minMatches: 4,
+        explain: 'Motivacija = sila za dejavnost. Motiv = sila za cilj. Potreba = pomanjkanje → napetost.'
+      },
+      {
+        type: 'mcq',
+        q: 'POTREBA je:',
+        options: [
+          'Stanje pomanjkanja ali neravnovesja, ki povzroča napetost',
+          'Dosežen cilj',
+          'Zunanja sila pritiska',
+          'Vrsta vedenja'
+        ],
+        correct: 0,
+        explain: 'Potreba = stanje pomanjkanja/neravnovesja → napetost → dejavnost za reševanje.'
+      },
+      {
+        type: 'order',
+        q: 'Razvrsti potrebe od osnovnih do najvišjih (vključno z estetiko):',
+        items: ['Varnost', 'Pripadnost in ljubezen', 'Spoštovanje in ugled', 'Znanje (kognitivne potrebe)', 'Estetika', 'Samouresničevanje'],
+        correctOrder: [0, 1, 2, 3, 4, 5],
+        explain: 'Varnost → Pripadnost → Ugled → Znanje → Estetika → Samouresničevanje.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE potrebe iz gradiva (Maslowova hierarhija):',
+        keywords: ['varnost', 'pripadnost', 'ljubezen', 'spoštovan', 'ugled', 'znanje', 'kognitiv', 'estetik', 'samouresnič'],
+        minMatches: 6,
+        explain: 'Potrebe: varnost, pripadnost in ljubezen, spoštovanje in ugled, znanje, estetika, samouresničevanje.'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj je STRES?',
+        options: [
+          'Odziv organizma na stresorje',
+          'Vedno negativen občutek',
+          'Vrsta motivacije',
+          'Potreba po počitku'
+        ],
+        correct: 0,
+        explain: 'Stres = odziv organizma na stresorje (zunanje ali notranje dražljaje).'
+      },
+      {
+        type: 'mcq',
+        q: 'EUSTRES je:',
+        options: ['Pozitiven stres', 'Negativen, škodljiv stres', 'Kronična utrujenost', 'Anksioznost'],
+        correct: 0,
+        explain: 'Eustres = POZITIVEN stres (npr. vznemirjenje pred nastopom).'
+      },
+      {
+        type: 'mcq',
+        q: 'DISTRES je:',
+        options: [
+          'Negativen, škodljiv stres',
+          'Pozitiven stres',
+          'Notranja motivacija',
+          'Potreba po znanju'
+        ],
+        correct: 0,
+        explain: 'Distres = negativen, škodljiv stres (npr. kronična skrb, izgorelost).'
+      },
+      {
+        type: 'input',
+        q: 'Razloži razliko med EUSTRESOM in DISTRESOM:',
+        keywords: ['pozitiv', 'negativ', 'škodljiv', 'spodbud'],
+        minMatches: 3,
+        explain: 'Eustres = pozitiven (spodbuja). Distres = negativen, škodljiv (uničuje).'
+      },
+      {
+        type: 'mcq',
+        q: 'Kaj je FRUSTRACIJA?',
+        options: [
+          'Nastane, ko ne moremo doseči cilja',
+          'Pozitiven občutek uspeha',
+          'Vrsta motivacije',
+          'Potreba po počitku'
+        ],
+        correct: 0,
+        explain: 'Frustracije in konflikti nastanejo, ko ciljev ne moremo doseči.'
+      },
+      {
+        type: 'input',
+        q: 'Kdaj nastanejo FRUSTRACIJE in KONFLIKTI?',
+        keywords: ['cilj', 'doseg', 'ne moremo', 'neuspeh'],
+        minMatches: 2,
+        explain: 'Frustracije in konflikti nastanejo, ko ciljev ne moremo doseči.'
+      },
+      {
+        type: 'input',
+        q: 'Naštej VSE 4 najpogostejše STRESORJE:',
+        keywords: ['okolje', 'delovno', 'življenjske', 'spremembe', 'vsakodnevne', 'skrbi'],
+        minMatches: 4,
+        explain: 'Stresorji: okolje, delovno mesto, življenjske spremembe, vsakodnevne skrbi.'
+      },
+      {
+        type: 'mcq',
+        q: 'Katera potreba spada med KOGNITIVNE potrebe?',
+        options: ['Znanje', 'Varnost', 'Estetika', 'Pripadnost'],
+        correct: 0,
+        explain: 'Znanje = kognitivna potreba. Po ugledu, pred estetiko in samouresničevanjem.'
+      },
+      {
+        type: 'input',
+        q: 'Kaj pomeni SAMOURESNIČEVANJE kot najvišja potreba?',
+        keywords: ['potencial', 'razvoj', 'izpoln', 'sebe', 'doseg'],
+        minMatches: 2,
+        explain: 'Samouresničevanje = uresničevanje lastnega potenciala, osebna rast, izpolnitev.'
+      },
+      {
+        type: 'mcq',
+        q: 'Motivacija nam pomaga razumeti:',
+        options: [
+          'Zakaj ljudje nekaj počnejo (človekovo vedenje)',
+          'Samo telesne reakcije',
+          'Samo genetske bolezni',
+          'Samo vreme'
+        ],
+        correct: 0,
+        explain: 'Motivacija razlaga človekovo vedenje – zakaj delamo, kar delamo.'
+      }
+    ]
+  }
+];
+
+const SHOP_ITEMS = [
+  { id: 'fifty_fifty', emoji: '🎯', name: 'Pol-pol', price: 120, type: 'consumable', maxStack: 5,
+    desc: 'Odstrani 2 napačna odgovora', effect: 'Uporabi pri izbirnih vprašanjih' },
+  { id: 'hint', emoji: '📜', name: 'Zvitek namiga', price: 100, type: 'consumable', maxStack: 5,
+    desc: 'Prikaže eno ključno besedo', effect: 'Uporabi pri pisnih vprašanjih' },
+  { id: 'skip', emoji: '⏭️', name: 'Preskok', price: 140, type: 'consumable', maxStack: 4,
+    desc: 'Preskoči vprašanje brez kazni', effect: 'Ne šteje kot napaka' },
+  { id: 'extra_life', emoji: '❤️', name: 'Druga priložnost', price: 150, type: 'consumable', maxStack: 4,
+    desc: 'Po zmoti ponovno poskusiš', effect: 'Samodejno 1× na vprašanje' },
+  { id: 'streak_shield', emoji: '🛡️', name: 'Ščit streaka', price: 180, type: 'consumable', maxStack: 4,
+    desc: 'Zmota ne zbije streaka', effect: 'Samodejno ob zmoti' },
+  { id: 'robot', emoji: '🤖', name: 'Robot asistent', price: 280, type: 'passive',
+    desc: 'Števec ključnih besed v živo', effect: 'Trajno · pisna vprašanja' },
+  { id: 'coin_boost', emoji: '💰', name: 'Zlati množilec', price: 350, type: 'passive',
+    desc: '+2 kovanci na pravilen odgovor', effect: 'Trajno · vsak kviz' },
+  { id: 'xp_boost', emoji: '⚡', name: 'XP raketa', price: 320, type: 'passive',
+    desc: '+5 XP na odgovor (10→15)', effect: 'Trajno · hitrejši nivo' },
+  { id: 'crown', emoji: '👑', name: 'Krona konca', price: 480, type: 'passive',
+    desc: '+50% kovancev ob koncu kviza', effect: 'Trajno · vsak konec' },
+  { id: 'gem', emoji: '💎', name: 'Diamant popolnosti', price: 550, type: 'passive',
+    desc: '+25 kovancev ob 100% kvizu', effect: 'Trajno · popolna zmaga' },
+];
+
+const CURSOR_ITEMS = [
+  { id: 'ptr_default', emoji: '🖱️', name: 'Klasična miška', price: 0, slot: 'pointer', free: true,
+    desc: 'Privzeti kazalec', effect: 'Brezplačno · brez sledi' },
+  { id: 'ptr_coin', emoji: '🪙', name: 'Zlati kazalec', price: 180, slot: 'pointer', theme: 'coin',
+    desc: 'Kazalec + zlata sled', effect: 'Vgrajena svetleča sled 🪙',
+    bundledTrail: { kind: 'emoji', emoji: '🪙', ms: 40, opacity: 0.3, glow: true, glowColor: 'rgba(255,215,0,0.75)', theme: 'coin' } },
+  { id: 'ptr_fire', emoji: '🔥', name: 'Ognjeni kazalec', price: 220, slot: 'pointer', theme: 'fire',
+    desc: 'Kazalec + ognjen rep', effect: 'Vgrajena plameneca sled 🔥',
+    bundledTrail: { kind: 'emoji', emoji: '🔥', ms: 28, opacity: 0.26, glow: true, glowColor: 'rgba(255,80,0,0.9)', theme: 'fire', extraGlow: true } },
+  { id: 'ptr_rocket', emoji: '🚀', name: 'Raketni kazalec', price: 260, slot: 'pointer', theme: 'rocket',
+    desc: 'Kazalec + raketna sled', effect: 'Vgrajena turkizna sled 🚀',
+    bundledTrail: { kind: 'emoji', emoji: '🚀', ms: 38, opacity: 0.28, glow: true, glowColor: 'rgba(78,205,196,0.8)', theme: 'rocket' } },
+  { id: 'ptr_brain', emoji: '🧠', name: 'BrainCoins kazalec', price: 240, slot: 'pointer', theme: 'brain',
+    desc: 'Kazalec + možganska sled', effect: 'Vgrajena rožnata sled 🧠',
+    bundledTrail: { kind: 'emoji', emoji: '✨', ms: 42, opacity: 0.25, glow: true, glowColor: 'rgba(244,75,127,0.7)', theme: 'brain' } },
+  { id: 'ptr_diamond', emoji: '💎', name: 'Diamantni kazalec', price: 320, slot: 'pointer', theme: 'diamond',
+    desc: 'Kazalec + diamantna sled', effect: 'Vgrajena vijolična sled 💎',
+    bundledTrail: { kind: 'emoji', emoji: '💎', ms: 36, opacity: 0.27, glow: true, glowColor: 'rgba(167,139,250,0.85)', theme: 'diamond' } },
+  { id: 'ptr_lightning', emoji: '⚡', name: 'Strela kazalec', price: 280, slot: 'pointer', theme: 'lightning',
+    desc: 'Kazalec + električna sled', effect: 'Vgrajena rumena sled ⚡',
+    bundledTrail: { kind: 'emoji', emoji: '⚡', ms: 30, opacity: 0.3, glow: true, glowColor: 'rgba(255,230,80,0.95)', theme: 'lightning', extraGlow: true } },
+
+  { id: 'trail_sparkle', emoji: '✨', name: 'Iskrica sled', price: 150, slot: 'trail',
+    desc: 'Zlati iskri za sabo', effect: 'Prekrije vgrajeno sled',
+    trail: { kind: 'emoji', emoji: '✨', ms: 45, opacity: 0.32, glow: true, glowColor: 'rgba(255,215,0,0.6)', theme: 'sparkle' } },
+  { id: 'trail_coin', emoji: '🪙', name: 'Kovančna sled', price: 200, slot: 'trail',
+    desc: 'Pustiš kovance za seboj', effect: 'Prekrije vgrajeno sled',
+    trail: { kind: 'emoji', emoji: '🪙', ms: 50, opacity: 0.3, glow: true, glowColor: 'rgba(255,215,0,0.7)', theme: 'coin' } },
+  { id: 'trail_flame', emoji: '🔥', name: 'Plamen sled', price: 250, slot: 'trail',
+    desc: 'Ognjen rep', effect: 'Prekrije vgrajeno sled',
+    trail: { kind: 'emoji', emoji: '🔥', ms: 35, opacity: 0.28, glow: true, glowColor: 'rgba(255,80,0,0.85)', theme: 'fire', extraGlow: true } },
+  { id: 'trail_rainbow', emoji: '🌈', name: 'Mavrica sled', price: 300, slot: 'trail',
+    desc: 'Barviti rep', effect: 'Prekrije vgrajeno sled',
+    trail: { kind: 'rainbow', ms: 32, opacity: 0.35, glow: true, theme: 'rainbow' } },
+  { id: 'trail_stars', emoji: '⭐', name: 'Zvezdna sled', price: 340, slot: 'trail',
+    desc: 'Zvezde za tabo', effect: 'Prekrije vgrajeno sled',
+    trail: { kind: 'emoji', emoji: '⭐', ms: 48, opacity: 0.3, glow: true, glowColor: 'rgba(255,255,200,0.75)', theme: 'stars' } },
+
+  { id: 'hat_cap', emoji: '🧢', name: 'Čepica na miški', price: 140, slot: 'hat',
+    desc: 'Športni stil', effect: 'Nad kazalcem' },
+  { id: 'hat_top', emoji: '🎩', name: 'Cilinder', price: 180, slot: 'hat',
+    desc: 'Elegantna miška', effect: 'Nad kazalcem' },
+  { id: 'hat_grad', emoji: '🎓', name: 'Diplomski klobček', price: 200, slot: 'hat',
+    desc: 'Za učenjake', effect: 'Nad kazalcem' },
+  { id: 'hat_crown', emoji: '👑', name: 'Krona na miški', price: 280, slot: 'hat',
+    desc: 'Kraljevska miška', effect: 'Nad kazalcem' },
+  { id: 'hat_wizard', emoji: '🧙', name: 'Čarovniški klobček', price: 360, slot: 'hat',
+    desc: 'Magija na klik', effect: 'Nad kazalcem' },
+  { id: 'hat_ribbon', emoji: '🎀', name: 'Tračka', price: 160, slot: 'hat',
+    desc: 'Sladka miška', effect: 'Nad kazalcem' },
+];
+
+// ========== STATE ==========
+let state = {
+  coins: parseInt(localStorage.getItem('bc_coins') || '0'),
+  xp: parseInt(localStorage.getItem('bc_xp') || '0'),
+  topicScores: JSON.parse(localStorage.getItem('bc_scores') || '{}'),
+  owned: JSON.parse(localStorage.getItem('bc_owned') || '[]'),
+  consumables: JSON.parse(localStorage.getItem('bc_consumables') || '{}'),
+  cursorOwned: JSON.parse(localStorage.getItem('bc_cursor_owned') || '["ptr_default"]'),
+  cursorEquip: JSON.parse(localStorage.getItem('bc_cursor_equip') || '{"pointer":"ptr_default","trail":null,"hat":null}'),
+  currentTopic: null,
+  questions: [],
+  qIndex: 0,
+  correct: 0,
+  streak: 0,
+  answered: false,
+  quizFlags: {},
+  trailConfig: null,
+  mouseX: 0,
+  mouseY: 0,
+  lastTrailAt: 0
+};
+
+function saveState() {
+  localStorage.setItem('bc_coins', state.coins);
+  localStorage.setItem('bc_xp', state.xp);
+  localStorage.setItem('bc_scores', JSON.stringify(state.topicScores));
+  localStorage.setItem('bc_owned', JSON.stringify(state.owned));
+  localStorage.setItem('bc_consumables', JSON.stringify(state.consumables));
+  localStorage.setItem('bc_cursor_owned', JSON.stringify(state.cursorOwned));
+  localStorage.setItem('bc_cursor_equip', JSON.stringify(state.cursorEquip));
+}
+
+function migrateShopSave() {
+  if (localStorage.getItem('bc_shop_v2')) return;
+  const legacyOwned = JSON.parse(localStorage.getItem('bc_owned') || '[]');
+  const map = {
+    hat: () => addConsumable('hint', 1),
+    rocket: () => addConsumable('skip', 1),
+    fire: () => addConsumable('streak_shield', 1),
+    robot: () => grantPassive('robot'),
+    star: () => grantPassive('coin_boost'),
+    trophy: () => grantPassive('crown'),
+    crown: () => grantPassive('xp_boost'),
+    gem: () => grantPassive('gem'),
+  };
+  legacyOwned.forEach(id => { if (map[id]) map[id](); });
+  state.owned = state.owned.filter(id => SHOP_ITEMS.some(i => i.id === id && i.type === 'passive'));
+  localStorage.setItem('bc_shop_v2', '1');
+  saveState();
+}
+
+function grantPassive(id) {
+  if (!state.owned.includes(id)) state.owned.push(id);
+}
+
+function hasPassive(id) {
+  return state.owned.includes(id);
+}
+
+function getConsumable(id) {
+  return state.consumables[id] || 0;
+}
+
+function addConsumable(id, n = 1) {
+  state.consumables[id] = Math.min(
+    (state.consumables[id] || 0) + n,
+    SHOP_ITEMS.find(i => i.id === id)?.maxStack || 99
+  );
+}
+
+function useConsumable(id) {
+  if (getConsumable(id) <= 0) return false;
+  state.consumables[id]--;
+  if (state.consumables[id] <= 0) delete state.consumables[id];
+  return true;
+}
+
+function getCoinsPerCorrect() {
+  let c = state.streak >= 3 ? 3 : 2;
+  if (hasPassive('coin_boost')) c += 2;
+  return c;
+}
+
+function getXpPerCorrect() {
+  return hasPassive('xp_boost') ? 15 : 10;
+}
+
+function getActivePassives() {
+  return SHOP_ITEMS.filter(i => i.type === 'passive' && hasPassive(i.id));
+}
+
+function getTotalConsumables() {
+  return Object.values(state.consumables).reduce((a, b) => a + b, 0);
+}
+
+// ========== SMART INPUT (fuzzy + hints) ==========
+const KEYWORD_LABELS = {
+  radovednost: 'radovednost', divergent: 'divergentno mišljenje',
+  original: 'originalnost', uporabn: 'uporabnost', rešitv: 'rešitev / reševanje',
+  originalnost: 'originalnost', fleksibilnost: 'fleksibilnost', fluentnost: 'fluentnost (veliko idej)',
+  prožnost: 'miselna prožnost', bogastvo: 'bogastvo idej', uporabnost: 'uporabnost',
+  težav: 'težave pri reševanju', reševanj: 'reševanje', problem: 'problem',
+  preparacija: 'preparacija', frustracija: 'frustracija', inkubacija: 'inkubacija',
+  iluminacija: 'iluminacija', verifikacija: 'verifikacija',
+  fleksibil: 'fleksibilnost', prožn: 'prožnost', spreminj: 'spreminjanje pogleda',
+  različn: 'različni pogledi', pogled: 'pogled / perspektiva',
+  kritik: 'brez kritike', 'več idej': 'veliko idej', nadgraj: 'nadgrajevanje idej',
+  sproščen: 'sproščena atmosfera', atmosfer: 'atmosfera',
+  predstav: 'predstavitev problema', spodbuj: 'spodbujanje', sodelovan: 'sodelovanje',
+  kritiz: 'preprečevanje kritike', osredotoč: 'osredotočenost skupine',
+  opredel: 'opredelitev problema', ustvarjal: 'ustvarjalno razmišljanje',
+  izbir: 'izbira rešitve', nadgrad: 'nadgradnja rešitve',
+  piš: 'pisno (brainwriting)', idej: 'ideje', list: 'list / papir', papir: 'papir',
+  tiho: 'tiho delo', zapis: 'zapisovanje',
+  brainstorm: 'brainstorming', 'do it': 'metoda DO IT', simplex: 'SIMPLEX',
+  provokac: 'metoda provokacije', brainwriting: 'brainwriting', 635: 'metoda 635',
+  razprava: 'razprava 66', 66: 'razprava 66',
+  kreativ: 'kreativnost', strah: 'strah pred kritiko', svobod: 'svoboda izražanja',
+  telesn: 'telesne značilnosti', duševn: 'duševne značilnosti', vedenjsk: 'vedenjske značilnosti',
+  kolerik: 'kolerik', sangvinik: 'sangvinik', flegmatik: 'flegmatik', melanholik: 'melanholik',
+  družab: 'družabnost', optimist: 'optimizem', zgovor: 'zgovornost',
+  pošten: 'poštenost', delavn: 'delavnost', solidarn: 'solidarnost',
+  dednost: 'dednost', vzgoj: 'vzgoja', čustv: 'čustvovanje', moral: 'moralne lastnosti',
+  inteligent: 'inteligentnost', ustvarjal: 'ustvarjalnost', spretnost: 'spretnosti',
+  življenj: 'celo življenje', celot: 'celota', vse: 'vse življenje',
+  vpliv: 'medsebojni vpliv', član: 'člani skupine', interakc: 'interakcija',
+  odnos: 'odnosi', dve: 'vsaj 2 osebi', več: 'več oseb', cilj: 'skupni cilj', oseb: 'osebe',
+  30: 'število 30', mala: 'mala skupina', velika: 'velika skupina', nad: 'nad 30', do: 'do 30',
+  vlog: 'vloge', položaj: 'položaji', komunikac: 'komunikacija', moč: 'razporeditev moči',
+  poštenost: 'poštenost', prijaznost: 'prijaznost', delavnost: 'delavnost',
+  solidarnost: 'solidarnost', samozavest: 'zdrava samozavest',
+  prispev: 'prispevanje', mnenj: 'mnenje', aktivn: 'aktivnost',
+  vodja: 'vodja', odloč: 'odločanje', hierarh: 'hierarhija',
+  spodbud: 'spodbuda / motivacija', pomanjkan: 'pomanjkanje', neravnoves: 'neravnovesje', napetost: 'napetost',
+  varnost: 'varnost', pripadnost: 'pripadnost', ljubezen: 'ljubezen',
+  spoštovan: 'spoštovanje', ugled: 'ugled', znanje: 'znanje', kognitiv: 'kognitivne potrebe',
+  estetik: 'estetika', samouresnič: 'samouresničevanje',
+  pozitiv: 'pozitiven (eustres)', negativ: 'negativen', škodljiv: 'škodljiv (distres)',
+  dosek: 'doseganje cilja', 'ne moremo': 'ne moremo doseči', neuspeh: 'neuspeh',
+  okolje: 'okolje', delovno: 'delovno mesto', življenjske: 'življenjske spremembe',
+  spremembe: 'spremembe', vsakodnevne: 'vsakodnevne skrbi', skrbi: 'skrbi',
+  potencial: 'potencial', razvoj: 'razvoj', izpoln: 'izpolnitev', sebe: 'sebe'
+};
+
+function normalizeText(s) {
+  return (s || '').toLowerCase()
+    .normalize('NFD').replace(/\p{M}/gu, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  if (!a.length) return b.length;
+  if (!b.length) return a.length;
+  const row = [];
+  for (let j = 0; j <= b.length; j++) row[j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    let prev = i - 1;
+    row[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const temp = row[j];
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + cost);
+      prev = temp;
+    }
+  }
+  return row[b.length];
+}
+
+function maxTypos(len) {
+  if (len <= 3) return 0;
+  if (len <= 5) return 1;
+  if (len <= 8) return 2;
+  return Math.min(3, Math.floor(len * 0.28));
+}
+
+function wordsFromText(textNorm) {
+  return textNorm.split(' ').filter(w => w.length > 0);
+}
+
+function fuzzyWordMatch(word, keyword) {
+  if (!word || !keyword) return false;
+  if (word === keyword) return true;
+  if (word.length >= 3 && keyword.length >= 3) {
+    if (word.includes(keyword) || keyword.includes(word)) return true;
+    const stem = Math.min(4, keyword.length, word.length);
+    if (word.slice(0, stem) === keyword.slice(0, stem)) return true;
+  }
+  return levenshtein(word, keyword) <= maxTypos(Math.max(word.length, keyword.length));
+}
+
+function matchKeyword(textNorm, words, keyword) {
+  const kw = normalizeText(keyword);
+  if (!kw) return null;
+
+  if (textNorm.includes(kw)) return 'exact';
+
+  if (kw.includes(' ')) {
+    const parts = kw.split(' ').filter(Boolean);
+    const partsOk = parts.every(part => {
+      if (textNorm.includes(part)) return true;
+      return words.some(w => fuzzyWordMatch(w, part));
+    });
+    return partsOk ? 'phrase' : null;
+  }
+
+  for (const w of words) {
+    if (fuzzyWordMatch(w, kw)) return 'fuzzy';
+  }
+
+  for (let i = 0; i < words.length - 1; i++) {
+    const pair = words[i] + ' ' + words[i + 1];
+    if (fuzzyWordMatch(pair.replace(' ', ''), kw) || levenshtein(pair, kw) <= maxTypos(kw.length)) {
+      return 'fuzzy';
+    }
+  }
+
+  return null;
+}
+
+function keywordLabel(kw) {
+  return KEYWORD_LABELS[kw] || (kw.charAt(0).toUpperCase() + kw.slice(1));
+}
+
+function buildConceptGroups(keywords) {
+  const groups = [];
+  const assigned = new Set();
+
+  keywords.forEach(kw => {
+    if (assigned.has(kw)) return;
+    const cluster = [kw];
+    assigned.add(kw);
+    keywords.forEach(other => {
+      if (assigned.has(other)) return;
+      const a = normalizeText(kw);
+      const b = normalizeText(other);
+      if (a.length >= 3 && b.length >= 3 && (a.includes(b) || b.includes(a))) {
+        cluster.push(other);
+        assigned.add(other);
+      }
+    });
+    groups.push({
+      keywords: cluster,
+      label: keywordLabel(kw)
+    });
+  });
+
+  return groups;
+}
+
+function analyzeInputAnswer(q, rawText) {
+  const textNorm = normalizeText(rawText);
+  const words = wordsFromText(textNorm);
+  const groups = buildConceptGroups(q.keywords);
+  const matchedGroups = [];
+  const missingGroups = [];
+
+  groups.forEach(group => {
+    let bestType = null;
+    for (const kw of group.keywords) {
+      const t = matchKeyword(textNorm, words, kw);
+      if (t === 'exact' || t === 'phrase') { bestType = 'exact'; break; }
+      if (t === 'fuzzy' && bestType !== 'exact') bestType = 'fuzzy';
+    }
+    if (bestType) matchedGroups.push({ group, type: bestType });
+    else missingGroups.push(group);
+  });
+
+  const score = matchedGroups.length;
+  const isCorrect = score >= q.minMatches;
+
+  let feedback = '';
+  if (!isCorrect) {
+    const parts = [];
+    if (matchedGroups.length) {
+      parts.push('✓ Ujel si: ' + matchedGroups.map(m => m.group.label).join(', '));
+    }
+    if (missingGroups.length) {
+      const stillNeed = Math.max(0, q.minMatches - score);
+      const hintList = missingGroups.slice(0, stillNeed + 2).map(g => g.label);
+      parts.push('○ Še dodaj (približno): ' + hintList.join(', '));
+    }
+    parts.push('(' + score + '/' + q.minMatches + ' konceptov · male napake so OK)');
+    feedback = parts.join('\n');
+  }
+
+  return { isCorrect, score, minMatches: q.minMatches, matchedGroups, missingGroups, groups, feedback };
+}
+
+function refreshInputFeedback(q) {
+  const ta = document.getElementById('inputAnswer');
+  if (!ta || !q || q.type !== 'input') return;
+
+  const analysis = analyzeInputAnswer(q, ta.value);
+  const chipsEl = document.getElementById('inputAiChips');
+  const statusEl = document.getElementById('inputAiStatus');
+
+  if (chipsEl) {
+    chipsEl.innerHTML = analysis.groups.map(g => {
+      const hit = analysis.matchedGroups.find(m => m.group === g);
+      const cls = hit ? (hit.type === 'fuzzy' ? 'matched-fuzzy' : 'matched') : '';
+      const icon = hit ? (hit.type === 'fuzzy' ? '~' : '✓') : '○';
+      return '<span class="kw-chip ' + cls + '" title="' + g.keywords.join(', ') + '">' + icon + ' ' + g.label + '</span>';
+    }).join('');
+  }
+
+  if (statusEl) {
+    const need = Math.max(0, q.minMatches - analysis.score);
+    statusEl.classList.toggle('ready', analysis.isCorrect);
+    statusEl.textContent = analysis.isCorrect
+      ? '✅ Dovolj konceptov – lahko preveriš!'
+      : '🧠 ' + analysis.score + '/' + q.minMatches + ' konceptov' + (need ? ' · še ~' + need : '');
+  }
+
+  const robot = document.getElementById('robotHelper');
+  if (robot && hasPassive('robot')) {
+    const fuzzyN = analysis.matchedGroups.filter(m => m.type === 'fuzzy').length;
+    robot.textContent = '🤖 Robot: ' + analysis.score + '/' + q.minMatches +
+      (fuzzyN ? ' (' + fuzzyN + ' s popravki)' : '') +
+      (analysis.isCorrect ? ' · Pripravljen ✅' : '');
+    robot.style.borderColor = analysis.isCorrect ? 'var(--green)' : 'var(--blue)';
+    robot.style.color = analysis.isCorrect ? 'var(--green)' : 'var(--blue)';
+  }
+}
+
+function getCursorItem(id) {
+  return CURSOR_ITEMS.find(i => i.id === id);
+}
+
+function ownsCursor(id) {
+  return state.cursorOwned.includes(id);
+}
+
+function ownCursor(id) {
+  if (!ownsCursor(id)) state.cursorOwned.push(id);
+}
+
+function getEquippedCursor(slot) {
+  return state.cursorEquip[slot] || null;
+}
+
+function isCursorEquipped(id) {
+  const item = getCursorItem(id);
+  return item && state.cursorEquip[item.slot] === id;
+}
+
+function equipCursor(id) {
+  const item = getCursorItem(id);
+  if (!item || !ownsCursor(id)) return;
+  if (item.slot === 'trail' || item.slot === 'hat') {
+    if (state.cursorEquip[item.slot] === id) {
+      state.cursorEquip[item.slot] = null;
+    } else {
+      state.cursorEquip[item.slot] = id;
+    }
+  } else {
+    state.cursorEquip.pointer = id;
+  }
+  saveState();
+  applyCursorCosmetics();
+  renderCursorShop();
+  renderCursorLoadout();
+}
+
+function getActiveTrailConfig() {
+  const trailId = state.cursorEquip.trail;
+  if (trailId) {
+    const shopTrail = getCursorItem(trailId);
+    if (shopTrail?.trail) return { ...shopTrail.trail };
+  }
+  const ptr = getCursorItem(state.cursorEquip.pointer || 'ptr_default');
+  return ptr?.bundledTrail ? { ...ptr.bundledTrail } : null;
+}
+
+function applyCursorCosmetics() {
+  const ptrId = state.cursorEquip.pointer || 'ptr_default';
+  const ptr = getCursorItem(ptrId) || getCursorItem('ptr_default');
+  const hatId = state.cursorEquip.hat;
+  const hat = hatId ? getCursorItem(hatId) : null;
+  const activeTrail = getActiveTrailConfig();
+
+  const root = document.getElementById('cursor-root');
+  const pointerEl = document.getElementById('cursorPointer');
+  const hatEl = document.getElementById('cursorHat');
+  if (!root || !pointerEl) return;
+
+  const useLayer = ptr.id !== 'ptr_default' || activeTrail || hat;
+  root.classList.toggle('hidden', !useLayer);
+  document.body.classList.toggle('bc-custom-cursor', useLayer);
+
+  ['fire', 'coin', 'rocket', 'brain', 'diamond', 'lightning'].forEach(t => root.classList.remove('glow-' + t));
+  if (ptr.theme) root.classList.add('glow-' + ptr.theme);
+
+  pointerEl.textContent = ptr.emoji;
+  if (hatEl) {
+    if (hat) {
+      hatEl.textContent = hat.emoji;
+      hatEl.style.display = 'block';
+    } else {
+      hatEl.style.display = 'none';
+    }
+  }
+
+  state.trailConfig = activeTrail;
+}
+
+function initCursorEngine() {
+  if (!ownsCursor('ptr_default')) ownCursor('ptr_default');
+
+  document.addEventListener('mousemove', e => {
+    state.mouseX = e.clientX;
+    state.mouseY = e.clientY;
+    const root = document.getElementById('cursor-root');
+    if (root && !root.classList.contains('hidden')) {
+      root.style.transform = 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)';
+    }
+    spawnCursorTrail(e.clientX, e.clientY);
+  });
+
+  applyCursorCosmetics();
+}
+
+function appendTrailParticle(layer, x, y, cfg, elClass, extraStyle) {
+  const dot = document.createElement('div');
+  const theme = cfg.theme || 'default';
+  dot.className = 'cursor-trail-dot ' + elClass + ' trail-theme-' + theme;
+  dot.style.left = x + 'px';
+  dot.style.top = y + 'px';
+  const op = cfg.opacity ?? 0.32;
+  dot.style.setProperty('--trail-start', String(op));
+  if (extraStyle) Object.assign(dot.style, extraStyle);
+  layer.appendChild(dot);
+  setTimeout(() => dot.remove(), 1100);
+}
+
+function spawnCursorTrail(x, y) {
+  if (!state.trailConfig || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cfg = state.trailConfig;
+  const now = Date.now();
+  if (now - state.lastTrailAt < cfg.ms) return;
+  state.lastTrailAt = now;
+
+  const layer = document.getElementById('cursor-trail-layer');
+  if (!layer) return;
+
+  const jitter = () => (Math.random() - 0.5) * 10;
+  const px = x + jitter();
+  const py = y + jitter();
+  const op = cfg.opacity ?? 0.32;
+  const glowCol = cfg.glowColor || 'rgba(255,255,255,0.5)';
+
+  if (cfg.glow) {
+    const size = 4 + Math.random() * (cfg.extraGlow ? 10 : 7);
+    appendTrailParticle(layer, px, py, cfg, 'trail-glow dot-circle', {
+      width: size + 'px',
+      height: size + 'px',
+      opacity: String(op * 0.85),
+      background: glowCol,
+      boxShadow: '0 0 ' + (cfg.extraGlow ? 18 : 12) + 'px ' + glowCol + ', 0 0 ' + (cfg.extraGlow ? 28 : 18) + 'px ' + glowCol.replace(/[\d.]+\)$/, '0.35)')
+    });
+    if (cfg.extraGlow && Math.random() > 0.5) {
+      appendTrailParticle(layer, px + jitter(), py + jitter(), cfg, 'trail-glow dot-circle', {
+        width: (size * 0.6) + 'px',
+        height: (size * 0.6) + 'px',
+        opacity: String(op * 0.5),
+        background: glowCol,
+        boxShadow: '0 0 20px ' + glowCol
+      });
+    }
+  }
+
+  if (cfg.kind === 'rainbow') {
+    const colors = ['#f9c74f', '#43e97b', '#4ecdc4', '#a78bfa', '#f44b7f', '#ffd700'];
+    const c = colors[Math.floor(Math.random() * colors.length)];
+    const sz = 5 + Math.random() * 6;
+    appendTrailParticle(layer, px, py, cfg, 'trail-glow dot-circle', {
+      width: sz + 'px',
+      height: sz + 'px',
+      opacity: String(op),
+      background: c,
+      boxShadow: '0 0 14px ' + c + ', 0 0 26px rgba(255,255,255,0.15)'
+    });
+  } else if (cfg.emoji) {
+    appendTrailParticle(layer, px, py, cfg, 'trail-emoji', {
+      opacity: String(op),
+      fontSize: (0.65 + Math.random() * 0.35) + 'rem'
+    });
+  }
+
+  while (layer.children.length > 55) layer.firstChild?.remove();
+}
+
+function renderCursorLoadout() {
+  const el = document.getElementById('cursorLoadout');
+  if (!el) return;
+  const ptr = getCursorItem(state.cursorEquip.pointer);
+  const shopTrail = state.cursorEquip.trail ? getCursorItem(state.cursorEquip.trail) : null;
+  const bundled = ptr?.bundledTrail;
+  const hat = state.cursorEquip.hat ? getCursorItem(state.cursorEquip.hat) : null;
+  let trailLabel = 'Brez sledi';
+  if (shopTrail) trailLabel = shopTrail.emoji + ' ' + shopTrail.name;
+  else if (bundled) trailLabel = (ptr?.emoji || '✨') + ' vgrajena sled';
+  el.innerHTML =
+    '<span class="cursor-loadout-chip">🖱️ ' + (ptr ? ptr.emoji + ' ' + ptr.name : '—') + '</span>' +
+    '<span class="cursor-loadout-chip">✨ ' + trailLabel + '</span>' +
+    '<span class="cursor-loadout-chip">🎩 ' + (hat ? hat.emoji + ' ' + hat.name : 'Brez klobčka') + '</span>';
+}
+
+function renderCursorShop() {
+  const grid = document.getElementById('cursorShopGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  renderCursorLoadout();
+
+  CURSOR_ITEMS.forEach(item => {
+    if (item.free) return;
+    const owned = ownsCursor(item.id);
+    const equipped = isCursorEquipped(item.id);
+    const div = document.createElement('div');
+    div.className = 'shop-item' + (owned ? ' owned' : '') + (equipped ? ' equipped' : '');
+
+    let actionHtml = '';
+    if (owned) {
+      const label = equipped
+        ? (item.slot === 'pointer' ? '✅ Na miški' : '✅ Oblečeno')
+        : '👕 Obleci';
+      const unequip = equipped && item.slot !== 'pointer';
+      const btnClass = 'equip-btn' + (unequip ? ' unequip' : equipped ? ' on' : '');
+      actionHtml = '<button type="button" class="' + btnClass + '">' +
+        (unequip ? '✕ Snemi' : label) + '</button>';
+    }
+
+    div.innerHTML = `
+      <div class="item-emoji">${item.emoji}</div>
+      <div class="item-name">${item.name}</div>
+      <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;margin-bottom:4px">${item.slot === 'pointer' ? 'Kazalec' : item.slot === 'trail' ? 'Sled' : 'Klobček'}</div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px">${item.desc}</div>
+      <div class="shop-effect">${item.effect}</div>
+      <div class="item-price">${owned ? (equipped ? '✅ Oblečeno' : '✅ V zbirki') : '🪙 ' + item.price}</div>
+      ${actionHtml}
+    `;
+
+    const btn = div.querySelector('.equip-btn');
+    if (btn) {
+      btn.onclick = e => { e.stopPropagation(); equipCursor(item.id); };
+    } else if (!owned) {
+      div.onclick = () => buyCursorItem(item, div);
+    }
+    grid.appendChild(div);
+  });
+
+  const defaultPtr = CURSOR_ITEMS.find(i => i.id === 'ptr_default');
+  const defDiv = document.createElement('div');
+  const defEquipped = state.cursorEquip.pointer === 'ptr_default';
+  defDiv.className = 'shop-item owned' + (defEquipped ? ' equipped' : '');
+  defDiv.innerHTML = `
+    <div class="item-emoji">${defaultPtr.emoji}</div>
+    <div class="item-name">${defaultPtr.name}</div>
+    <div class="shop-effect">${defaultPtr.effect}</div>
+    <div class="item-price">${defEquipped ? '✅ Na miški' : 'V zbirki'}</div>
+    <button type="button" class="equip-btn${defEquipped ? ' on' : ''}">${defEquipped ? '✅ Na miški' : '👕 Obleci'}</button>
+  `;
+  defDiv.querySelector('.equip-btn').onclick = e => {
+    e.stopPropagation();
+    equipCursor('ptr_default');
+  };
+  grid.insertBefore(defDiv, grid.firstChild);
+}
+
+function buyCursorItem(item, cardEl) {
+  if (ownsCursor(item.id)) {
+    equipCursor(item.id);
+    return;
+  }
+  if (state.coins < item.price) {
+    screenFlash('lose');
+    showToast('❌ Premalo kovancev! Potrebuješ ' + item.price + ' 🪙');
+    return;
+  }
+  state.coins -= item.price;
+  ownCursor(item.id);
+  equipCursor(item.id);
+  saveState();
+  updateHeader();
+  if (cardEl) {
+    cardEl.classList.add('buy-flash');
+    setTimeout(() => cardEl.classList.remove('buy-flash'), 600);
+  }
+  renderCursorShop();
+  screenFlash('gold');
+  launchConfetti(50, 0.8);
+  showToast('🖱️ ' + item.emoji + ' ' + item.name + ' — oblečeno!');
+}
+
+// ========== UI ==========
+function updateHeader() {
+  document.getElementById('coinCount').textContent = state.coins;
+  const level = Math.floor(state.xp / 100) + 1;
+  const xpInLevel = state.xp % 100;
+  document.getElementById('xpLabel').textContent = `Nivo ${level} – ${state.xp} XP`;
+  document.getElementById('xpFill').style.width = xpInLevel + '%';
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+  const labels = { home: 'teme', shop: 'trgovina', stats: 'statistike' };
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    if (t.textContent.toLowerCase().includes(labels[tab] || tab)) t.classList.add('active');
+  });
+  if (tab === 'home') renderTopics();
+  if (tab === 'shop') { renderShop(); renderCursorShop(); }
+  if (tab === 'stats') renderStats();
+}
+
+function goHome() { showTab('home'); }
+
+// ========== TOPICS ==========
+function renderTopics() {
+  const grid = document.getElementById('topicsGrid');
+  grid.innerHTML = '';
+  TOPICS.forEach(topic => {
+    const score = state.topicScores[topic.id] || { best: 0, total: topic.questions.length };
+    const pct = Math.round((score.best / score.total) * 100) || 0;
+    const div = document.createElement('div');
+    div.className = 'topic-card';
+    div.innerHTML = `
+      <span class="topic-emoji">${topic.emoji}</span>
+      <div class="topic-name">${topic.name}</div>
+      <div class="topic-progress"><div class="topic-progress-fill" style="width:${pct}%"></div></div>
+      <div class="topic-score">${score.best ? `Rekord: ${score.best}/${score.total} (${pct}%)` : 'Še nisi igral!'}</div>
+    `;
+    div.onclick = () => startQuiz(topic.id);
+    grid.appendChild(div);
+  });
+}
+
+// ========== QUIZ ==========
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(topicId) {
+  const topic = TOPICS.find(t => t.id === topicId);
+  state.currentTopic = topic;
+  state.questions = shuffle(topic.questions);
+  state.qIndex = 0;
+  state.correct = 0;
+  state.streak = 0;
+  state.quizFlags = {};
+  document.getElementById('streakBadge')?.classList.remove('hot');
+
+  launchConfetti(40, 0.6);
+  screenFlash('win');
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-quiz').classList.add('active');
+  document.getElementById('quizTopicTitle').textContent = topic.emoji + ' ' + topic.name;
+
+  renderDots();
+  renderQuestion();
+}
+
+function renderDots() {
+  const c = document.getElementById('progressDots');
+  c.innerHTML = '';
+  state.questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === state.qIndex ? ' active' : '');
+    d.id = 'dot-' + i;
+    c.appendChild(d);
+  });
+}
+
+function renderQuestion() {
+  state.answered = false;
+  state.quizFlags = { fiftyApplied: false, hintShown: false, extraLifeUsed: false };
+
+  const qBox = document.getElementById('questionBox');
+  if (qBox) {
+    qBox.classList.remove('win-glow', 'lose-glow', 'q-enter');
+    void qBox.offsetWidth;
+    qBox.classList.add('q-enter');
+  }
+
+  const q = state.questions[state.qIndex];
+  const badge = document.getElementById('questionBadge');
+  const qText = document.getElementById('questionText');
+  const content = document.getElementById('questionContent');
+  const fb = document.getElementById('feedbackBox');
+  const submitBtn = document.getElementById('submitBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  fb.style.display = 'none';
+  fb.className = 'feedback-box';
+  nextBtn.classList.remove('visible');
+  submitBtn.style.display = 'none';
+  submitBtn.disabled = false;
+
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot' + (i < state.qIndex ? ' done' : i === state.qIndex ? ' active' : '');
+  });
+
+  qText.textContent = q.q;
+
+  if (q.type === 'mcq') {
+    badge.textContent = '🎯 Izberi pravilen odgovor';
+    content.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'options-grid';
+
+    const optionsWithIdx = q.options.map((o, i) => ({ text: o, idx: i }));
+    shuffle(optionsWithIdx).forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt.text;
+      btn.dataset.idx = opt.idx;
+      btn.onclick = () => selectMCQ(btn, opt.idx, q);
+      grid.appendChild(btn);
+    });
+    content.appendChild(grid);
+
+  } else if (q.type === 'input') {
+    badge.textContent = '✏️ Napiši odgovor (pametno preverjanje)';
+    const groups = buildConceptGroups(q.keywords);
+    const hintPreview = groups.slice(0, 6).map(g => g.label).join(', ');
+    content.innerHTML = `
+      <textarea class="input-answer" id="inputAnswer" placeholder="Piši s svojimi besedami – ni treba dobesedno..."></textarea>
+      <div class="input-ai-panel" id="inputAiPanel">
+        <div class="input-ai-title">🧠 Pametni asistent</div>
+        <div class="input-ai-sub">Razume tvoj odgovor, ne le točne besede. Potrebuješ približno <strong>${q.minMatches}</strong> od <strong>${groups.length}</strong> konceptov: ${hintPreview}${groups.length > 6 ? '…' : ''}</div>
+        <div class="input-ai-chips" id="inputAiChips"></div>
+        <div class="input-ai-status" id="inputAiStatus">Začni pisati…</div>
+      </div>
+    `;
+    submitBtn.style.display = 'flex';
+    if (hasPassive('robot')) {
+      const helper = document.createElement('div');
+      helper.id = 'robotHelper';
+      helper.className = 'robot-helper';
+      helper.textContent = '🤖 Robot: 0/' + q.minMatches + ' konceptov';
+      content.appendChild(helper);
+    }
+    const ta = document.getElementById('inputAnswer');
+    ta.addEventListener('input', () => refreshInputFeedback(q));
+
+  } else if (q.type === 'order') {
+    badge.textContent = '🔢 Razvrsti v pravilen vrstni red';
+    content.innerHTML = '';
+    buildOrderList(content, q);
+    submitBtn.style.display = 'flex';
+  }
+
+  renderPassiveStrip();
+  renderPowerupBar(q);
+}
+
+function renderPassiveStrip() {
+  const strip = document.getElementById('passiveStrip');
+  if (!strip) return;
+  const passives = getActivePassives();
+  if (!passives.length) {
+    strip.style.display = 'none';
+    return;
+  }
+  strip.style.display = 'flex';
+  strip.innerHTML = passives.map(p =>
+    `<span class="passive-chip">${p.emoji} ${p.name}</span>`
+  ).join('');
+}
+
+function renderPowerupBar(q) {
+  const bar = document.getElementById('powerupBar');
+  if (!bar) return;
+  bar.innerHTML = '';
+  bar.classList.remove('empty');
+
+  const clickables = [
+    { id: 'fifty_fifty', icon: '🎯', label: '50/50', show: q.type === 'mcq', fn: () => applyFiftyFifty(q) },
+    { id: 'hint', icon: '📜', label: 'Namig', show: q.type === 'input', fn: () => applyHint(q) },
+    { id: 'skip', icon: '⏭️', label: 'Preskoči', show: true, fn: () => applySkip() },
+  ];
+
+  let hasAny = false;
+  clickables.forEach(pu => {
+    if (!pu.show) return;
+    const n = getConsumable(pu.id);
+    if (n <= 0) return;
+    hasAny = true;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'powerup-btn';
+    btn.innerHTML = pu.icon + ' ' + pu.label + ' <span class="pu-count">' + n + '</span>';
+    btn.disabled = state.answered;
+    btn.onclick = () => { if (!state.answered) pu.fn(); };
+    bar.appendChild(btn);
+  });
+
+  [
+    { id: 'extra_life', icon: '❤️', label: 'Rešitev ×' },
+    { id: 'streak_shield', icon: '🛡️', label: 'Ščit ×' },
+  ].forEach(pu => {
+    const n = getConsumable(pu.id);
+    if (n <= 0) return;
+    hasAny = true;
+    const span = document.createElement('span');
+    span.className = 'powerup-auto';
+    span.title = 'Samodejno ob zmoti';
+    span.textContent = pu.icon + ' ' + pu.label + n + ' (auto)';
+    bar.appendChild(span);
+  });
+
+  if (!hasAny) {
+    bar.classList.add('empty');
+    bar.textContent = getTotalConsumables() || getActivePassives().length
+      ? 'Na tem vprašanju ni aktivnih pripomočkov'
+      : 'Kupi pripomočke v trgovini 🛒';
+  }
+}
+
+function applyFiftyFifty(q) {
+  if (state.answered || q.type !== 'mcq' || state.quizFlags.fiftyApplied) return;
+  if (getConsumable('fifty_fifty') <= 0) return;
+  useConsumable('fifty_fifty');
+  state.quizFlags.fiftyApplied = true;
+  const btns = [...document.querySelectorAll('.option-btn')];
+  const wrong = btns.filter(b => parseInt(b.dataset.idx, 10) !== q.correct);
+  shuffle(wrong).slice(0, 2).forEach(b => {
+    b.style.display = 'none';
+    b.disabled = true;
+  });
+  showToast('🎯 Pol-pol! 2 napačna odgovora odstranjena.');
+  renderPowerupBar(q);
+  saveState();
+}
+
+function applyHint(q) {
+  if (state.answered || q.type !== 'input' || state.quizFlags.hintShown) return;
+  if (getConsumable('hint') <= 0) return;
+  useConsumable('hint');
+  state.quizFlags.hintShown = true;
+  const groups = buildConceptGroups(q.keywords);
+  const missing = groups.filter(g => !analyzeInputAnswer(q, document.getElementById('inputAnswer')?.value || '').matchedGroups.find(m => m.group === g));
+  const pick = (missing.length ? missing : groups)[Math.floor(Math.random() * (missing.length || groups.length))];
+  const hintEl = document.createElement('div');
+  hintEl.className = 'hint-reveal';
+  hintEl.textContent = '📜 Namig: poskusi omeniti »' + pick.label + '«';
+  document.getElementById('questionContent').insertBefore(
+    hintEl,
+    document.getElementById('questionContent').firstChild
+  );
+  showToast('📜 Namig razkrit!');
+  renderPowerupBar(q);
+  saveState();
+}
+
+function applySkip() {
+  if (state.answered) return;
+  if (getConsumable('skip') <= 0) return;
+  useConsumable('skip');
+  const dot = document.getElementById('dot-' + state.qIndex);
+  if (dot) dot.className = 'dot skipped';
+  showToast('⏭️ Vprašanje preskočeno.');
+  saveState();
+  nextQuestion();
+}
+
+function retryQuestionAfterMistake() {
+  state.answered = false;
+  document.getElementById('feedbackBox').style.display = 'none';
+  document.getElementById('nextBtn').classList.remove('visible');
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    if (state.questions[state.qIndex].type !== 'mcq') submitBtn.style.display = 'flex';
+  }
+  document.getElementById('dot-' + state.qIndex).className = 'dot active';
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.disabled = false;
+    b.classList.remove('wrong', 'correct', 'reveal');
+    b.style.display = '';
+  });
+  [...document.querySelectorAll('.order-item')].forEach(el => {
+    el.classList.remove('correct-order', 'wrong-order');
+  });
+  const q = state.questions[state.qIndex];
+  renderPowerupBar(q);
+}
+
+// ========== IMPROVED ORDER/SORT ==========
+function buildOrderList(container, q) {
+  // Build shuffled list preserving original indices
+  const items = q.items.map((text, origIdx) => ({ text, origIdx }));
+  const shuffled = shuffle(items);
+
+  const list = document.createElement('div');
+  list.className = 'order-list';
+  list.id = 'orderList';
+
+  shuffled.forEach(item => {
+    const el = createOrderItem(item);
+    list.appendChild(el);
+  });
+
+  updateOrderNumbers(list);
+
+  const hint = document.createElement('div');
+  hint.className = 'drag-hint';
+  hint.textContent = '↕ Povleci in pusti, da razvrtiš';
+
+  container.appendChild(list);
+  container.appendChild(hint);
+
+  initDragDrop(list);
+  initTouchSort(list);
+}
+
+function createOrderItem(item) {
+  const el = document.createElement('div');
+  el.className = 'order-item';
+  el.dataset.origIdx = item.origIdx;
+  el.innerHTML = `<span class="order-num">1.</span><span class="order-text">${item.text}</span>`;
+  return el;
+}
+
+function updateOrderNumbers(list) {
+  [...list.children].forEach((el, i) => {
+    el.querySelector('.order-num').textContent = (i + 1) + '.';
+  });
+}
+
+// --- Mouse drag & drop ---
+function initDragDrop(list) {
+  let dragSrc = null;
+
+  list.addEventListener('dragstart', e => {
+    const item = e.target.closest('.order-item');
+    if (!item) return;
+    dragSrc = item;
+    item.classList.add('dragging-src');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+
+  list.addEventListener('dragend', () => {
+    dragSrc && dragSrc.classList.remove('dragging-src');
+    [...list.children].forEach(c => c.classList.remove('drag-over-top','drag-over-bot'));
+    dragSrc = null;
+  });
+
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    const target = e.target.closest('.order-item');
+    if (!target || target === dragSrc) return;
+    [...list.children].forEach(c => c.classList.remove('drag-over-top','drag-over-bot'));
+    const rect = target.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    target.classList.add(e.clientY < midY ? 'drag-over-top' : 'drag-over-bot');
+  });
+
+  list.addEventListener('dragleave', e => {
+    const target = e.target.closest('.order-item');
+    if (target) target.classList.remove('drag-over-top','drag-over-bot');
+  });
+
+  list.addEventListener('drop', e => {
+    e.preventDefault();
+    const target = e.target.closest('.order-item');
+    if (!target || !dragSrc || target === dragSrc) return;
+
+    const rect = target.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    const insertBefore = e.clientY < midY;
+
+    target.classList.remove('drag-over-top','drag-over-bot');
+
+    if (insertBefore) {
+      list.insertBefore(dragSrc, target);
+    } else {
+      list.insertBefore(dragSrc, target.nextSibling);
+    }
+    updateOrderNumbers(list);
+  });
+
+  // Make items draggable
+  [...list.children].forEach(el => el.draggable = true);
+}
+
+// --- Touch sort (mobile) ---
+function initTouchSort(list) {
+  let touchSrc = null, touchClone = null, startY = 0;
+
+  list.addEventListener('touchstart', e => {
+    const item = e.target.closest('.order-item');
+    if (!item) return;
+    touchSrc = item;
+    startY = e.touches[0].clientY;
+    item.classList.add('dragging-src');
+
+    touchClone = item.cloneNode(true);
+    touchClone.style.cssText = `position:fixed;left:${item.getBoundingClientRect().left}px;top:${item.getBoundingClientRect().top}px;width:${item.offsetWidth}px;opacity:0.85;z-index:9999;pointer-events:none;transition:none;`;
+    document.body.appendChild(touchClone);
+  }, { passive: true });
+
+  list.addEventListener('touchmove', e => {
+    if (!touchSrc || !touchClone) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const dy = touch.clientY - startY;
+    touchClone.style.top = (touchSrc.getBoundingClientRect().top + dy) + 'px';
+
+    [...list.children].forEach(c => c.classList.remove('drag-over-top','drag-over-bot'));
+    const els = [...list.children].filter(c => c !== touchSrc);
+    for (const el of els) {
+      const rect = el.getBoundingClientRect();
+      if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        el.classList.add(touch.clientY < rect.top + rect.height / 2 ? 'drag-over-top' : 'drag-over-bot');
+        break;
+      }
+    }
+  }, { passive: false });
+
+  list.addEventListener('touchend', e => {
+    if (!touchSrc) return;
+    touchClone && touchClone.remove();
+    touchClone = null;
+    touchSrc.classList.remove('dragging-src');
+
+    const touch = e.changedTouches[0];
+    [...list.children].forEach(c => {
+      if (c === touchSrc) return;
+      const over = c.classList.contains('drag-over-top') || c.classList.contains('drag-over-bot');
+      if (over) {
+        if (c.classList.contains('drag-over-top')) list.insertBefore(touchSrc, c);
+        else list.insertBefore(touchSrc, c.nextSibling);
+      }
+      c.classList.remove('drag-over-top','drag-over-bot');
+    });
+
+    updateOrderNumbers(list);
+    touchSrc = null;
+  });
+}
+
+// ========== MCQ ==========
+function selectMCQ(btn, idx, q) {
+  if (state.answered) return;
+  state.answered = true;
+
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b => b.disabled = true);
+
+  const isCorrect = idx === q.correct;
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  if (!isCorrect) {
+    // Highlight correct answer
+    allBtns.forEach(b => {
+      if (parseInt(b.dataset.idx) === q.correct) b.classList.add('reveal');
+    });
+  }
+
+  handleAnswer(isCorrect, q.explain);
+}
+
+// ========== SUBMIT ==========
+function submitAnswer() {
+  if (state.answered) return;
+  const q = state.questions[state.qIndex];
+
+  if (q.type === 'input') {
+    const val = document.getElementById('inputAnswer').value;
+    const analysis = analyzeInputAnswer(q, val);
+    const explain = analysis.isCorrect
+      ? q.explain
+      : q.explain + (analysis.feedback ? '\n\n' + analysis.feedback : '');
+    handleAnswer(analysis.isCorrect, explain);
+
+  } else if (q.type === 'order') {
+    const list = document.getElementById('orderList');
+    const currentOrder = [...list.children].map(c => parseInt(c.dataset.origIdx));
+    const isCorrect = currentOrder.every((v, i) => v === q.correctOrder[i]);
+
+    // Colour each item
+    [...list.children].forEach((el, i) => {
+      el.classList.add(parseInt(el.dataset.origIdx) === q.correctOrder[i] ? 'correct-order' : 'wrong-order');
+    });
+
+    handleAnswer(isCorrect, q.explain);
+  }
+
+  state.answered = true;
+  document.getElementById('submitBtn').disabled = true;
+}
+
+// ========== ANSWER HANDLING ==========
+function handleAnswer(isCorrect, explain) {
+  state.answered = true;
+  const fb = document.getElementById('feedbackBox');
+  const fbTitle = document.getElementById('feedbackTitle');
+  const fbDetail = document.getElementById('feedbackDetail');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (isCorrect) {
+    state.correct++;
+    state.streak++;
+    const coinsEarned = getCoinsPerCorrect();
+    state.coins += coinsEarned;
+    state.xp += getXpPerCorrect();
+    fb.className = 'feedback-box correct-fb';
+    fbTitle.textContent = getCorrectMsg();
+    fbDetail.textContent = explain;
+    document.getElementById('dot-' + state.qIndex).className = 'dot done';
+    celebrateCorrect(state.streak, coinsEarned);
+    if (state.streak >= 2) {
+      document.getElementById('streakBadge').style.display = 'inline-flex';
+      document.getElementById('streakNum').textContent = state.streak;
+    }
+  } else {
+    if (getConsumable('extra_life') > 0 && !state.quizFlags.extraLifeUsed) {
+      useConsumable('extra_life');
+      state.quizFlags.extraLifeUsed = true;
+      fb.className = 'feedback-box wrong-fb';
+      fbTitle.textContent = '❤️ Druga priložnost!';
+      fbDetail.textContent = '💡 ' + explain + ' — poskusi še enkrat!';
+      showToast('❤️ Rešitev napake! Ponovno poskusi.');
+      saveState();
+      retryQuestionAfterMistake();
+      return;
+    }
+
+    let keptStreak = false;
+    if (getConsumable('streak_shield') > 0 && state.streak > 0) {
+      useConsumable('streak_shield');
+      keptStreak = true;
+      showToast('🛡️ Ščit streaka! Zaporedje ohranjeno.');
+    } else {
+      state.streak = 0;
+      document.getElementById('streakBadge').style.display = 'none';
+      document.getElementById('streakBadge')?.classList.remove('hot');
+    }
+
+    fb.className = 'feedback-box wrong-fb';
+    fbTitle.textContent = keptStreak ? getWrongMsg() + ' (streak ohranjen!)' : getWrongMsg();
+    fbDetail.textContent = '💡 ' + explain;
+    document.getElementById('dot-' + state.qIndex).className = 'dot wrong';
+    celebrateWrong();
+    saveState();
+    renderPowerupBar(state.questions[state.qIndex]);
+  }
+
+  fb.style.display = 'block';
+  nextBtn.classList.add('visible');
+  nextBtn.textContent = state.qIndex === state.questions.length - 1 ? '🏁 Poglej rezultate!' : 'Naslednje vprašanje ➡️';
+
+  saveState();
+  updateHeader();
+  checkLevelUp();
+}
+
+function nextQuestion() {
+  state.qIndex++;
+  if (state.qIndex >= state.questions.length) { showResults(); return; }
+  renderQuestion();
+}
+
+function showResults() {
+  const total = state.questions.length;
+  const score = state.correct;
+  const pct = Math.round((score / total) * 100);
+  let coinsBonus = score * 2 + (pct === 100 ? 10 : 0);
+  if (hasPassive('crown')) coinsBonus = Math.floor(coinsBonus * 1.5);
+  if (hasPassive('gem') && pct === 100) coinsBonus += 25;
+  state.coins += coinsBonus;
+  state.xp += score * 5;
+
+  const prev = state.topicScores[state.currentTopic.id]?.best || 0;
+  state.topicScores[state.currentTopic.id] = { best: Math.max(prev, score), total };
+  saveState();
+  updateHeader();
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-results').classList.add('active');
+
+  let emoji, title;
+  if (pct === 100)     { emoji = '🌟'; title = 'POPOLNO! Brezhibno!'; }
+  else if (pct >= 80)  { emoji = '🎉'; title = 'Odlično! Si pravi genij!'; }
+  else if (pct >= 60)  { emoji = '😊'; title = 'Dobro! Še malo vaje!'; }
+  else if (pct >= 40)  { emoji = '💪'; title = 'Naprej, zmoreš bolje!'; }
+  else                 { emoji = '📚'; title = 'Čas za ponavljanje!'; }
+
+  const resultsBox = document.querySelector('.results-box');
+  const resultsEmoji = document.getElementById('resultsEmoji');
+  resultsBox?.classList.toggle('perfect', pct === 100);
+  resultsEmoji?.classList.toggle('mega-bounce', pct >= 80);
+
+  document.getElementById('resultsEmoji').textContent = emoji;
+  document.getElementById('resultsTitle').textContent = title;
+  document.getElementById('resultsScore').textContent = score + '/' + total + ' (' + pct + '%)';
+  let bonusNote = '🪙 +' + coinsBonus + ' kovancev';
+  if (hasPassive('crown')) bonusNote += ' (👑 +50%)';
+  if (hasPassive('gem') && pct === 100) bonusNote += ' (💎 +25)';
+  document.getElementById('coinsEarned').innerHTML = bonusNote + ' zasluženo!';
+
+  screenFlash(pct === 100 ? 'gold' : pct >= 60 ? 'win' : 'lose');
+  launchConfetti(pct === 100 ? 200 : pct >= 80 ? 120 : pct >= 50 ? 60 : 25, pct >= 80 ? 1.5 : 1);
+  spawnCoins(Math.min(coinsBonus, 25), true);
+  popCoinDisplay();
+  if (pct === 100) {
+    showCombo('🏆 POPOLNO!', '#ffd700');
+    setTimeout(() => showCombo('🌟 GENIJ!', '#43e97b'), 800);
+  } else if (pct >= 80) showCombo('🎉 SUPER!', '#4ecdc4');
+  checkLevelUp();
+}
+
+function restartQuiz() { startQuiz(state.currentTopic.id); }
+
+// ========== SHOP ==========
+function renderShop() {
+  const grid = document.getElementById('shopGrid');
+  grid.innerHTML = '';
+  SHOP_ITEMS.forEach(item => {
+    const isPassive = item.type === 'passive';
+    const passiveActive = isPassive && hasPassive(item.id);
+    const stack = getConsumable(item.id);
+    const atMax = !isPassive && stack >= item.maxStack;
+    const div = document.createElement('div');
+    div.className = 'shop-item' + (passiveActive ? ' owned' : '');
+    let priceLabel = '🪙 ' + item.price;
+    if (passiveActive) priceLabel = '✅ Aktivno';
+    else if (!isPassive && stack > 0) priceLabel = '🪙 ' + item.price + ' · imaš ' + stack + '/' + item.maxStack;
+    else if (atMax) priceLabel = '📦 Polna zaloga';
+
+    div.innerHTML = `
+      <div class="item-emoji">${item.emoji}</div>
+      <div class="item-name">${item.name}</div>
+      ${!isPassive && stack > 0 ? '<div class="shop-stack">Zaloga: ' + stack + '/' + item.maxStack + '</div>' : ''}
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px">${item.desc}</div>
+      <div class="shop-effect">${item.effect}</div>
+      <div class="item-price">${priceLabel}</div>
+    `;
+    const canBuy = !passiveActive && !atMax;
+    if (canBuy) div.onclick = () => buyItem(item, div);
+    grid.appendChild(div);
+  });
+
+  const inv = document.getElementById('inventoryItems');
+  const passiveList = getActivePassives();
+  const consumableList = SHOP_ITEMS.filter(i => i.type === 'consumable' && getConsumable(i.id) > 0);
+  if (!passiveList.length && !consumableList.length) {
+    inv.innerHTML = '<div style="color:var(--muted);font-size:0.9rem">Še nisi ničesar kupil! 🛒</div>';
+  } else {
+    let html = '';
+    passiveList.forEach(p => {
+      html += `<div class="inventory-item" title="${p.name}: ${p.effect}">${p.emoji}</div>`;
+    });
+    consumableList.forEach(p => {
+      const n = getConsumable(p.id);
+      html += `<div class="inventory-item" title="${p.name} ×${n}">${p.emoji}<span style="font-size:0.65rem;display:block">${n}×</span></div>`;
+    });
+    const cursorOwned = state.cursorOwned.filter(id => id !== 'ptr_default');
+    cursorOwned.forEach(id => {
+      const c = getCursorItem(id);
+      if (c) html += `<div class="inventory-item" title="${c.name}">${c.emoji}</div>`;
+    });
+    inv.innerHTML = html;
+  }
+  renderCursorShop();
+}
+
+function buyItem(item, cardEl) {
+  if (item.type === 'passive' && hasPassive(item.id)) {
+    showToast('✅ Ta bonus je že aktiven!');
+    return;
+  }
+  if (item.type === 'consumable' && getConsumable(item.id) >= item.maxStack) {
+    showToast('📦 Polna zaloga (' + item.maxStack + ')!');
+    return;
+  }
+  if (state.coins < item.price) {
+    screenFlash('lose');
+    screenShake();
+    showToast('❌ Premalo kovancev! Potrebuješ ' + item.price + ' 🪙');
+    return;
+  }
+  state.coins -= item.price;
+  if (item.type === 'passive') grantPassive(item.id);
+  else addConsumable(item.id, 1);
+  saveState();
+  updateHeader();
+  if (cardEl) {
+    cardEl.classList.add('buy-flash');
+    setTimeout(() => cardEl.classList.remove('buy-flash'), 600);
+  }
+  renderShop();
+  screenFlash('gold');
+  launchConfetti(80, 1.2);
+  showCombo(item.emoji + ' KUPLJENO!', '#43e97b');
+  const msg = item.type === 'consumable'
+    ? '🎉 +' + item.name + ' (imaš ' + getConsumable(item.id) + ')'
+    : '🎉 ' + item.name + ' je zdaj aktiven!';
+  showToast(msg);
+}
+
+// ========== STATS ==========
+function renderStats() {
+  const cont = document.getElementById('statsContent');
+  let html = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px">
+      <div style="background:var(--card);border-radius:16px;padding:20px;text-align:center">
+        <div style="font-size:2rem;font-family:'Fredoka One';color:var(--coin)">${state.coins}</div>
+        <div style="color:var(--muted);font-size:0.85rem">🪙 Kovanci</div>
+      </div>
+      <div style="background:var(--card);border-radius:16px;padding:20px;text-align:center">
+        <div style="font-size:2rem;font-family:'Fredoka One';color:var(--purple)">${state.xp}</div>
+        <div style="color:var(--muted);font-size:0.85rem">⚡ XP</div>
+      </div>
+      <div style="background:var(--card);border-radius:16px;padding:20px;text-align:center">
+        <div style="font-size:2rem;font-family:'Fredoka One';color:var(--green)">${getTotalConsumables()}</div>
+        <div style="color:var(--muted);font-size:0.85rem">🎒 Porabniški</div>
+      </div>
+    </div>
+    <div style="font-family:'Fredoka One';font-size:1.2rem;color:var(--blue);margin-bottom:12px">Napredek po temah</div>
+  `;
+
+  TOPICS.forEach(t => {
+    const s = state.topicScores[t.id];
+    const pct = s ? Math.round((s.best / s.total) * 100) : 0;
+    html += `
+      <div style="background:var(--card);border-radius:16px;padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;gap:12px">
+        <span style="font-size:1.8rem">${t.emoji}</span>
+        <div style="flex:1">
+          <div style="font-weight:700;margin-bottom:4px">${t.name}</div>
+          <div style="height:8px;background:rgba(255,255,255,0.1);border-radius:8px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,${t.color},var(--blue));border-radius:8px;transition:width 0.5s"></div>
+          </div>
+        </div>
+        <div style="font-family:'Fredoka One';font-size:1.1rem;color:${t.color}">${pct}%</div>
+      </div>
+    `;
+  });
+
+  if (getActivePassives().length) {
+    html += '<div style="font-family:\'Fredoka One\';font-size:1.1rem;color:var(--coin);margin:20px 0 10px">Aktivni bonusi</div>';
+    getActivePassives().forEach(p => {
+      html += `<div style="background:var(--card);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:0.9rem">
+        ${p.emoji} <strong>${p.name}</strong> — <span style="color:var(--muted)">${p.effect}</span>
+      </div>`;
+    });
+  }
+
+  cont.innerHTML = html;
+}
+
+// ========== FX ENGINE ==========
+let fxLevel = 1;
+let confettiParticles = [];
+let confettiAnimating = false;
+const FX_COLORS = ['#f9c74f', '#43e97b', '#4ecdc4', '#a78bfa', '#f44b7f', '#ffd700', '#f8961e'];
+
+function initFx() {
+  initAmbientParticles();
+  initConfettiCanvas();
+  fxLevel = Math.floor(state.xp / 100) + 1;
+}
+
+function initAmbientParticles() {
+  const container = document.getElementById('ambient-particles');
+  if (!container || container.childElementCount > 0) return;
+  const emojis = ['✨', '⭐', '💫', '🪙', '⚡', '🔮'];
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    const dur = 8 + Math.random() * 14;
+    const delay = Math.random() * 12;
+    p.style.position = 'absolute';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animation = `float-up ${dur}s linear infinite`;
+    p.style.animationDelay = delay + 's';
+    if (Math.random() > 0.55) {
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.fontSize = (10 + Math.random() * 14) + 'px';
+      p.style.opacity = '0.7';
+    } else {
+      p.className = 'ambient-particle';
+      const size = 2 + Math.random() * 4;
+      p.style.width = p.style.height = size + 'px';
+      p.style.background = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
+    }
+    container.appendChild(p);
+  }
+}
+
+function initConfettiCanvas() {
+  const canvas = document.getElementById('confetti-canvas');
+  if (!canvas) return;
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+  resize();
+  window.addEventListener('resize', resize);
+}
+
+function launchConfetti(amount = 80, spread = 1) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const canvas = document.getElementById('confetti-canvas');
+  if (!canvas) return;
+  const w = canvas.width;
+  const h = canvas.height;
+  const shapes = ['rect', 'circle', 'star'];
+  for (let i = 0; i < amount * spread; i++) {
+    confettiParticles.push({
+      x: w * 0.2 + Math.random() * w * 0.6,
+      y: h * 0.35 + Math.random() * h * 0.1,
+      vx: (Math.random() - 0.5) * 14,
+      vy: -6 - Math.random() * 12,
+      rot: Math.random() * 360,
+      vr: (Math.random() - 0.5) * 18,
+      size: 4 + Math.random() * 8,
+      color: FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)],
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+      life: 1,
+      decay: 0.008 + Math.random() * 0.012
+    });
+  }
+  if (!confettiAnimating) {
+    confettiAnimating = true;
+    tickConfetti();
+  }
+}
+
+function tickConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  confettiParticles = confettiParticles.filter(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.35;
+    p.vx *= 0.99;
+    p.rot += p.vr;
+    p.life -= p.decay;
+    if (p.life <= 0 || p.y > canvas.height + 20) return false;
+
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, p.life);
+    ctx.translate(p.x, p.y);
+    ctx.rotate((p.rot * Math.PI) / 180);
+    ctx.fillStyle = p.color;
+    if (p.shape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (p.shape === 'star') {
+      ctx.font = p.size + 'px serif';
+      ctx.fillText('★', -p.size / 2, p.size / 3);
+    } else {
+      ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+    }
+    ctx.restore();
+    return true;
+  });
+
+  if (confettiParticles.length > 0) {
+    requestAnimationFrame(tickConfetti);
+  } else {
+    confettiAnimating = false;
+  }
+}
+
+function screenFlash(type) {
+  const el = document.getElementById('flash-overlay');
+  if (!el) return;
+  el.className = '';
+  void el.offsetWidth;
+  el.classList.add('flash-' + type);
+  setTimeout(() => { el.className = ''; }, 120);
+}
+
+function screenShake() {
+  const wrap = document.querySelector('.wrapper');
+  if (!wrap) return;
+  wrap.classList.remove('shake');
+  void wrap.offsetWidth;
+  wrap.classList.add('shake');
+  setTimeout(() => wrap.classList.remove('shake'), 450);
+}
+
+function popCoinDisplay() {
+  const el = document.querySelector('.coin-display');
+  if (!el) return;
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+}
+
+function floatReward(text, x, y) {
+  const el = document.createElement('div');
+  el.className = 'float-reward';
+  el.textContent = text;
+  el.style.left = (x ?? 50) + '%';
+  el.style.top = (y ?? 45) + '%';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1100);
+}
+
+function showCombo(text, color) {
+  const el = document.createElement('div');
+  el.className = 'combo-popup';
+  el.textContent = text;
+  el.style.color = color || '#ffd700';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
+
+function showLevelUp(level) {
+  screenFlash('level');
+  launchConfetti(120, 1.5);
+  const banner = document.createElement('div');
+  banner.className = 'level-up-banner';
+  banner.innerHTML = `
+    <div class="level-up-inner">
+      <span class="lvl-emoji">🚀</span>
+      <div class="lvl-title">NIVO ${level}!</div>
+      <div class="lvl-sub">BrainCoins legenda raste!</div>
+    </div>
+  `;
+  document.body.appendChild(banner);
+  setTimeout(() => banner.remove(), 2200);
+}
+
+function celebrateCorrect(streak, coinsEarned) {
+  if (navigator.vibrate) navigator.vibrate(streak >= 5 ? [30, 20, 50] : [25, 15, 35]);
+  const qBox = document.getElementById('questionBox');
+  if (qBox) {
+    qBox.classList.remove('lose-glow', 'win-glow');
+    void qBox.offsetWidth;
+    qBox.classList.add('win-glow');
+    setTimeout(() => qBox.classList.remove('win-glow'), 700);
+  }
+
+  screenFlash(streak >= 5 ? 'gold' : 'win');
+  launchConfetti(15 + streak * 8, streak >= 3 ? 1.2 : 0.8);
+  spawnCoins(coinsEarned, true);
+  popCoinDisplay();
+  floatReward('+' + coinsEarned + ' 🪙', 42 + Math.random() * 16, 38 + Math.random() * 10);
+  floatReward('+10 XP ⚡', 50 + Math.random() * 10, 52);
+
+  const xpFill = document.getElementById('xpFill');
+  if (xpFill) {
+    xpFill.classList.add('xp-burst');
+    setTimeout(() => xpFill.classList.remove('xp-burst'), 600);
+  }
+
+  const badge = document.getElementById('streakBadge');
+  if (badge && streak >= 2) {
+    badge.classList.toggle('hot', streak >= 4);
+  }
+
+  if (streak === 3) showCombo('🔥 3× ZAPORED!', '#f8961e');
+  else if (streak === 5) showCombo('⚡ 5× ON FIRE!', '#ffd700');
+  else if (streak === 7) showCombo('💎 7× LEGENDA!', '#a78bfa');
+  else if (streak >= 10) showCombo('🌟 ' + streak + '× NEUSTAVLJIV!', '#43e97b');
+}
+
+function celebrateWrong() {
+  if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+  const qBox = document.getElementById('questionBox');
+  if (qBox) {
+    qBox.classList.remove('win-glow', 'lose-glow');
+    qBox.classList.add('lose-glow');
+    setTimeout(() => qBox.classList.remove('lose-glow'), 500);
+  }
+  screenFlash('lose');
+  screenShake();
+}
+
+function checkLevelUp() {
+  const newLevel = Math.floor(state.xp / 100) + 1;
+  if (newLevel > fxLevel) {
+    fxLevel = newLevel;
+    showLevelUp(newLevel);
+  }
+}
+
+// ========== HELPERS ==========
+function getCorrectMsg() {
+  return ['✅ Pravilno! Bravo!','🎯 Odlično!','🌟 Sijajno!','💪 Super!','🔥 Ja, točno!','⚡ Popolno!','🚀 BOOM!','💎 Briljantno!'][Math.floor(Math.random()*8)];
+}
+function getWrongMsg() {
+  return ['❌ Napačno...','😅 Ups! Zmota.','🤔 Skoraj, a ne...','📚 Poskusi znova!','💥 Ne tokrat...'][Math.floor(Math.random()*5)];
+}
+
+function spawnCoins(n, intense) {
+  const count = Math.max(n, intense ? n * 2 : 3);
+  const symbols = ['🪙', '⭐', '✨', '💰', '⚡'];
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      const isStar = Math.random() > 0.55;
+      el.className = 'coin-burst' + (isStar ? ' star' : '');
+      el.textContent = isStar ? symbols[1 + Math.floor(Math.random() * 3)] : '🪙';
+      el.style.left = (15 + Math.random() * 70) + 'vw';
+      el.style.top = (20 + Math.random() * 50) + 'vh';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+    }, i * (intense ? 40 : 80));
+  }
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast-fx';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+  launchConfetti(25, 0.5);
+}
+
+// ========== INIT ==========
+migrateShopSave();
+initFx();
+initCursorEngine();
+updateHeader();
+renderTopics();
+</script>
+</body>
+</html>
