@@ -373,6 +373,185 @@
   .topic-progress-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--green), var(--blue)); transition: width 0.5s ease; }
   .topic-score { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
 
+  .exam-hero-card {
+    background: linear-gradient(135deg, #1a1550 0%, #2a1f6e 50%, #1e1a60 100%);
+    border: 2px solid var(--accent);
+    border-radius: 24px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 8px 32px rgba(249,199,79,0.15);
+  }
+  .exam-hero-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(249,199,79,0.28);
+  }
+  .exam-hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(249,199,79,0.12) 0%, transparent 70%);
+  }
+  .exam-hero-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(249,199,79,0.12);
+    border: 1px solid rgba(249,199,79,0.35);
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin-bottom: 10px;
+  }
+  .exam-hero-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.75rem;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .exam-hero-desc {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 560px;
+    margin-bottom: 14px;
+  }
+  .exam-hero-meta {
+    font-size: 0.85rem;
+    color: var(--blue);
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .exam-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #1a1035;
+    font-weight: 800;
+    font-size: 1rem;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+  }
+  .exam-hero-btn:hover { filter: brightness(1.08); }
+
+  .exam-progress-wrap { flex: 1; max-width: 420px; margin-left: 16px; }
+  .exam-progress-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-align: right;
+  }
+  .exam-progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .exam-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--green));
+    border-radius: 8px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .exam-section-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 3px 10px;
+    margin-bottom: 10px;
+  }
+
+  .exam-gap-report {
+    text-align: left;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .exam-gap-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    color: var(--blue);
+    margin-bottom: 6px;
+  }
+  .exam-gap-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .exam-section-row {
+    background: rgba(255,255,255,0.04);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--muted);
+  }
+  .exam-section-row.weak { border-left-color: var(--red); }
+  .exam-section-row.mid { border-left-color: var(--accent2); }
+  .exam-section-row.strong { border-left-color: var(--green); }
+  .exam-section-row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .exam-section-row-name { font-weight: 700; font-size: 0.9rem; }
+  .exam-section-row-pct {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+  }
+  .exam-section-row-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .exam-section-row-fill { height: 100%; border-radius: 6px; transition: width 0.5s; }
+  .exam-section-miss {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.45;
+    margin-top: 4px;
+  }
+  .exam-weak-list {
+    background: rgba(244,75,127,0.08);
+    border: 1px solid rgba(244,75,127,0.25);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+  .exam-weak-list strong { color: var(--red); }
+
+  body.exam-mode #powerupBar,
+  body.exam-mode #passiveStrip,
+  body.exam-mode #streakBadge { display: none !important; }
+  body.exam-mode .input-ai-panel,
+  body.exam-mode .robot-helper { display: none !important; }
+  body.exam-mode .progress-dots { display: none !important; }
+  body.exam-mode .quiz-header { flex-wrap: wrap; gap: 12px; }
+  body.exam-mode .quiz-topic-title { font-size: 1.1rem; }
+  body.exam-mode .exam-progress-wrap { max-width: 100%; margin-left: 0; flex: 1 1 200px; }
+  body.exam-mode .feedback-box.correct-fb .feedback-title { color: var(--green); }
+  body.exam-mode .feedback-box.wrong-fb .feedback-title { color: var(--red); }
+
   .shop-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: var(--accent); text-align: center; margin-bottom: 24px; }
   .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
   .shop-item {
@@ -1203,7 +1382,8 @@
   <!-- HOME -->
   <div class="screen active" id="screen-home">
     <div class="home-title">Izberi temo! 🚀</div>
-    <div class="home-sub">Igraj, učis in zaslužiš kovance!</div>
+    <div class="home-sub">Igraj, učis in zaslužiš kovance — ali opravi celoten izpit!</div>
+    <div id="examHeroMount"></div>
     <div class="topics-grid" id="topicsGrid"></div>
   </div>
 
@@ -1237,7 +1417,14 @@
   <!-- QUIZ -->
   <div class="screen" id="screen-quiz">
     <div class="quiz-header">
-      <div class="quiz-topic-title" id="quizTopicTitle"></div>
+      <div>
+        <div class="quiz-topic-title" id="quizTopicTitle"></div>
+        <div class="exam-section-tag" id="examSectionTag" style="display:none"></div>
+      </div>
+      <div class="exam-progress-wrap" id="examProgressWrap" style="display:none">
+        <div class="exam-progress-label" id="examProgressLabel">Vprašanje 1 od 200</div>
+        <div class="exam-progress-bar"><div class="exam-progress-fill" id="examProgressFill"></div></div>
+      </div>
       <div class="progress-dots" id="progressDots"></div>
     </div>
 
@@ -1272,16 +1459,18 @@
       <div class="results-title" id="resultsTitle">Odlično!</div>
       <div class="results-score" id="resultsScore">8/10</div>
       <div class="coins-earned" id="coinsEarned">🪙 +15 kovancev!</div>
-      <div class="results-actions">
-        <button class="submit-btn" onclick="restartQuiz()">🔄 Igraj znova</button>
+      <div class="exam-gap-report" id="examGapReport" style="display:none"></div>
+      <div class="results-actions" id="resultsActions">
+        <button class="submit-btn" id="restartBtn" onclick="restartQuiz()">🔄 Igraj znova</button>
         <button class="btn-secondary" onclick="goHome()">🏠 Nazaj na teme</button>
-        <button class="btn-secondary" onclick="showTab('shop')">🛒 Pojdi v trgovino</button>
+        <button class="btn-secondary" id="shopResultBtn" onclick="showTab('shop')">🛒 Pojdi v trgovino</button>
       </div>
     </div>
   </div>
 
 </div>
 
+<script src="exam-topics.js"></script>
 <script>
 // ========== DATA ==========
 const TOPICS = [
@@ -1987,6 +2176,20 @@ const TOPICS = [
   }
 ];
 
+applyExamTopics();
+
+const EXAM_DOC_SECTIONS = {
+  creativity:    { name: 'Ustvarjalnost in ustvarjalni proces',           color: '#f9c74f' },
+  brainstorming: { name: 'Tehnike pridobivanja idej',                    color: '#4ecdc4' },
+  simplex:       { name: 'Metoda SIMPLEX in nadgradnje',                  color: '#4ecdc4' },
+  blocks:        { name: 'Blokade ustvarjalnosti',                       color: '#f44b7f' },
+  personality:   { name: 'Osebnost, temperament in značaj',              color: '#a78bfa' },
+  group:         { name: 'Skupina in struktura',                         color: '#43e97b' },
+  team:          { name: 'Timsko delo in Belbinove vloge',               color: '#f8961e' },
+  motivation:    { name: 'Motivacija in motiviranje',                    color: '#f9c74f' },
+  stress:        { name: 'Stres, frustracije in konflikti',              color: '#a78bfa' },
+};
+
 const SHOP_ITEMS = [
   { id: 'fifty_fifty', emoji: '🎯', name: 'Pol-pol', price: 120, type: 'consumable', maxStack: 5,
     desc: 'Odstrani 2 napačna odgovora', effect: 'Uporabi pri izbirnih vprašanjih' },
@@ -2081,7 +2284,11 @@ let state = {
   trailConfig: null,
   mouseX: 0,
   mouseY: 0,
-  lastTrailAt: 0
+  lastTrailAt: 0,
+  examMode: false,
+  examLog: [],
+  examBest: JSON.parse(localStorage.getItem('bc_exam_best') || 'null'),
+  examSectionStats: JSON.parse(localStorage.getItem('bc_exam_sections') || '{}'),
 };
 
 function saveState() {
@@ -2092,6 +2299,38 @@ function saveState() {
   localStorage.setItem('bc_consumables', JSON.stringify(state.consumables));
   localStorage.setItem('bc_cursor_owned', JSON.stringify(state.cursorOwned));
   localStorage.setItem('bc_cursor_equip', JSON.stringify(state.cursorEquip));
+  localStorage.setItem('bc_exam_best', JSON.stringify(state.examBest));
+  localStorage.setItem('bc_exam_sections', JSON.stringify(state.examSectionStats));
+}
+
+function getTotalQuestionCount() {
+  return TOPICS.reduce((n, t) => n + t.questions.length, 0);
+}
+
+function setExamMode(on) {
+  state.examMode = on;
+  document.body.classList.toggle('exam-mode', on);
+  const wrap = document.getElementById('examProgressWrap');
+  const dots = document.getElementById('progressDots');
+  const tag = document.getElementById('examSectionTag');
+  if (wrap) wrap.style.display = on ? 'block' : 'none';
+  if (dots) dots.style.display = on ? 'none' : 'flex';
+  if (tag) tag.style.display = on ? 'inline-block' : 'none';
+}
+
+function logExamAnswer(isCorrect, skipped) {
+  if (!state.examMode) return;
+  const q = state.questions[state.qIndex];
+  const sid = q._sectionId;
+  state.examLog.push({
+    sectionId: sid,
+    correct: skipped ? false : isCorrect,
+    skipped: !!skipped,
+    qText: q.q,
+  });
+  if (!state.examSectionStats[sid]) state.examSectionStats[sid] = { correct: 0, wrong: 0 };
+  if (skipped || !isCorrect) state.examSectionStats[sid].wrong++;
+  else state.examSectionStats[sid].correct++;
 }
 
 function migrateShopSave() {
@@ -2203,7 +2442,35 @@ const KEYWORD_LABELS = {
   dosek: 'doseganje cilja', 'ne moremo': 'ne moremo doseči', neuspeh: 'neuspeh',
   okolje: 'okolje', delovno: 'delovno mesto', življenjske: 'življenjske spremembe',
   spremembe: 'spremembe', vsakodnevne: 'vsakodnevne skrbi', skrbi: 'skrbi',
-  potencial: 'potencial', razvoj: 'razvoj', izpoln: 'izpolnitev', sebe: 'sebe'
+  potencial: 'potencial', razvoj: 'razvoj', izpoln: 'izpolnitev', sebe: 'sebe',
+  majhna: 'majhna izkušenost', srednj: 'srednja izkušenost', visoka: 'visoka izkušenost',
+  šibk: 'šibka ustvarjalnost', upade: 'ustvarjalnost upade', največ: 'največja ustvarjalnost',
+  vzdušje: 'posebno vzdušje', vsiljujejo: 'ne vsiljevanje mnenj', odkrito: 'odkrito pogovarjanje',
+  vzpodbudno: 'vzpodbudno vzdušje', povezav: 'nove povezave', povezave: 'povezave med podatki',
+  sklic: 'sklic sestanka', dolgovezn: 'dolgovezne razprave', razvijajo: 'razvijanje idej drugih',
+  klobuk: 'šest klobukov', negativen: 'negativen odnos', domnev: 'domneve in sumi',
+  logik: 'pretirana logika', črnogled: 'črnogledost', pravil: 'slepo pravila',
+  legitimn: 'legitimna moč', pritisk: 'moč pritiska', nagrajevanj: 'moč nagrajevanja',
+  strokovn: 'strokovna moč', referenčn: 'referenčna moč', informacijsk: 'informacijska moč',
+  nadvlad: 'nadvladje / dominacija', podrejen: 'podrejenost', tekmovan: 'tekmovanje',
+  prijazn: 'prijaznost', spoznavn: 'spoznavna zrelost', čustven: 'čustvena zrelost',
+  socialn: 'socialna zrelost', moraln: 'moralna zrelost', motor: 'motorične sposobnosti',
+  preživetj: 'preživetje', priznan: 'priznanje / moč', zabav: 'zabava',
+  pohval: 'pohvale in graje', rezultat: 'rezultati dela', pričakovan: 'pričakovanja',
+  plač: 'plača', preusmer: 'preusmeritev', prelož: 'preložitev', sprijazn: 'sprijaznitev',
+  nadomestil: 'nadomestilo', zakaj: 'vprašanje Zakaj?', omejuje: 'Kaj me omejuje?',
+  razšir: 'razširitev problema', bank: 'bank / posojilo',
+  garač: 'Garač (Belbin)', uskajevalec: 'Usklajevalec', izzivalec: 'Izzivalec',
+  inovator: 'Inovator', iskalec: 'Iskalec virov', ocenjevalec: 'Ocenjevalec',
+  timski: 'Timski delavec', zaključevalec: 'Zaključevalec naloge',
+  informac: 'zbiranje informacij', koordin: 'koordinacija', nesoglas: 'nesoglasja',
+  drznost: 'drznost mlajših', energij: 'energija', mlajš: 'mlajši člani',
+  sproščanj: 'vaje sproščanja', giban: 'gibanje / rekreacija', prehrana: 'prehrana',
+  življenjsk: 'zdrav življenjski slog', priznamo: 'priznanje konflikta',
+  ozadje: 'ozadje konflikta', argument: 'razumski argumenti', konstruktivn: 'konstruktiven cilj',
+  besedn: 'besedni napad', fizičn: 'fizični napad', žalitv: 'žalitve', sarkazem: 'sarkazem',
+  nov: 'novost', nenavadn: 'nenavadnost', redk: 'redkost', enkratn: 'enkratnost',
+  neponovljiv: 'neponovljivost', čas: 'poraba časa'
 };
 
 function normalizeText(s) {
@@ -2680,10 +2947,37 @@ function showTab(tab) {
   if (tab === 'stats') renderStats();
 }
 
-function goHome() { showTab('home'); }
+function goHome() {
+  setExamMode(false);
+  showTab('home');
+}
 
 // ========== TOPICS ==========
+function renderExamHero() {
+  const mount = document.getElementById('examHeroMount');
+  if (!mount) return;
+  const total = getTotalQuestionCount();
+  let meta = 'Vseh ' + total + ' vprašanj iz gradiva · brez namigov in pripomočkov';
+  if (state.examBest) {
+    const pct = Math.round((state.examBest.score / state.examBest.total) * 100);
+    meta = 'Najboljši rezultat: ' + state.examBest.score + '/' + state.examBest.total + ' (' + pct + '%) · ponovi za popolno pripravo';
+  }
+  mount.innerHTML = `
+    <div class="exam-hero-card" onclick="startFullExam()">
+      <div class="exam-hero-badge">OVP · Ustvarjanje medijskih izdelkov</div>
+      <div class="exam-hero-title">📝 Celoten izpit</div>
+      <div class="exam-hero-desc">
+        Simulacija pravega izpita: vsa vprašanja iz dokumenta, naključni vrstni red,
+        pisna in izbirna vprašanja brez namigov. Na koncu dobiš pregled poglavij, ki jih še moraš ponoviti.
+      </div>
+      <div class="exam-hero-meta" id="examHeroMeta">${meta}</div>
+      <button type="button" class="exam-hero-btn" onclick="event.stopPropagation(); startFullExam()">Začni celoten izpit →</button>
+    </div>
+  `;
+}
+
 function renderTopics() {
+  renderExamHero();
   const grid = document.getElementById('topicsGrid');
   grid.innerHTML = '';
   TOPICS.forEach(topic => {
@@ -2714,12 +3008,14 @@ function shuffle(arr) {
 
 function startQuiz(topicId) {
   const topic = TOPICS.find(t => t.id === topicId);
+  setExamMode(false);
   state.currentTopic = topic;
   state.questions = shuffle(topic.questions);
   state.qIndex = 0;
   state.correct = 0;
   state.streak = 0;
   state.quizFlags = {};
+  state.examLog = [];
   document.getElementById('streakBadge')?.classList.remove('hot');
 
   launchConfetti(40, 0.6);
@@ -2732,6 +3028,49 @@ function startQuiz(topicId) {
 
   renderDots();
   renderQuestion();
+}
+
+function startFullExam() {
+  const allQ = [];
+  TOPICS.forEach(topic => {
+    topic.questions.forEach((q, qi) => {
+      allQ.push({
+        ...q,
+        _topicId: topic.id,
+        _sectionId: topic.id,
+        _qKey: topic.id + '-' + qi,
+      });
+    });
+  });
+
+  setExamMode(true);
+  state.currentTopic = { id: 'full_exam', name: 'Celoten izpit', emoji: '📝' };
+  state.questions = shuffle(allQ);
+  state.qIndex = 0;
+  state.correct = 0;
+  state.streak = 0;
+  state.quizFlags = {};
+  state.examLog = [];
+  document.getElementById('streakBadge')?.classList.remove('hot');
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-quiz').classList.add('active');
+  document.getElementById('quizTopicTitle').textContent = '📝 Celoten izpit — OVP';
+
+  updateExamProgress();
+  renderQuestion();
+}
+
+function updateExamProgress() {
+  if (!state.examMode) return;
+  const total = state.questions.length;
+  const cur = state.qIndex + 1;
+  const pct = Math.round((state.qIndex / total) * 100);
+  const label = document.getElementById('examProgressLabel');
+  const fill = document.getElementById('examProgressFill');
+  if (label) label.textContent = 'Vprašanje ' + cur + ' od ' + total;
+  if (fill) fill.style.width = pct + '%';
 }
 
 function renderDots() {
@@ -2776,8 +3115,17 @@ function renderQuestion() {
 
   qText.textContent = q.q;
 
+  if (state.examMode) {
+    updateExamProgress();
+    const sec = EXAM_DOC_SECTIONS[q._sectionId];
+    const tag = document.getElementById('examSectionTag');
+    if (tag && sec) tag.textContent = 'Poglavje: ' + sec.name;
+  }
+
   if (q.type === 'mcq') {
-    badge.textContent = '🎯 Izberi pravilen odgovor';
+    badge.textContent = state.examMode
+      ? 'Izbirno vprašanje — označi en pravilen odgovor'
+      : '🎯 Izberi pravilen odgovor';
     content.innerHTML = '';
     const grid = document.createElement('div');
     grid.className = 'options-grid';
@@ -2794,10 +3142,14 @@ function renderQuestion() {
     content.appendChild(grid);
 
   } else if (q.type === 'input') {
-    badge.textContent = '✏️ Napiši odgovor (pametno preverjanje)';
+    badge.textContent = state.examMode
+      ? 'Pisno vprašanje — odgovori s svojimi besedami'
+      : '✏️ Napiši odgovor (pametno preverovanje)';
     const groups = buildConceptGroups(q.keywords);
     const hintPreview = groups.slice(0, 6).map(g => g.label).join(', ');
-    content.innerHTML = `
+    content.innerHTML = state.examMode
+      ? `<textarea class="input-answer" id="inputAnswer" placeholder="Vpiši svoj odgovor…"></textarea>`
+      : `
       <textarea class="input-answer" id="inputAnswer" placeholder="Piši s svojimi besedami – ni treba dobesedno..."></textarea>
       <div class="input-ai-panel" id="inputAiPanel">
         <div class="input-ai-title">🧠 Pametni asistent</div>
@@ -2807,7 +3159,8 @@ function renderQuestion() {
       </div>
     `;
     submitBtn.style.display = 'flex';
-    if (hasPassive('robot')) {
+    submitBtn.textContent = state.examMode ? 'Oddaj odgovor' : '✅ Preveri odgovor';
+    if (!state.examMode && hasPassive('robot')) {
       const helper = document.createElement('div');
       helper.id = 'robotHelper';
       helper.className = 'robot-helper';
@@ -2815,13 +3168,16 @@ function renderQuestion() {
       content.appendChild(helper);
     }
     const ta = document.getElementById('inputAnswer');
-    ta.addEventListener('input', () => refreshInputFeedback(q));
+    if (!state.examMode) ta.addEventListener('input', () => refreshInputFeedback(q));
 
   } else if (q.type === 'order') {
-    badge.textContent = '🔢 Razvrsti v pravilen vrstni red';
+    badge.textContent = state.examMode
+      ? 'Razvrstitev — uredi elemente v pravilen vrstni red'
+      : '🔢 Razvrsti v pravilen vrstni red';
     content.innerHTML = '';
     buildOrderList(content, q);
     submitBtn.style.display = 'flex';
+    submitBtn.textContent = state.examMode ? 'Oddaj odgovor' : '✅ Preveri odgovor';
   }
 
   renderPassiveStrip();
@@ -2831,6 +3187,7 @@ function renderQuestion() {
 function renderPassiveStrip() {
   const strip = document.getElementById('passiveStrip');
   if (!strip) return;
+  if (state.examMode) { strip.style.display = 'none'; return; }
   const passives = getActivePassives();
   if (!passives.length) {
     strip.style.display = 'none';
@@ -2845,6 +3202,13 @@ function renderPassiveStrip() {
 function renderPowerupBar(q) {
   const bar = document.getElementById('powerupBar');
   if (!bar) return;
+  if (state.examMode) {
+    bar.innerHTML = '';
+    bar.classList.add('empty');
+    bar.style.display = 'none';
+    return;
+  }
+  bar.style.display = '';
   bar.innerHTML = '';
   bar.classList.remove('empty');
 
@@ -3176,20 +3540,21 @@ function handleAnswer(isCorrect, explain) {
   if (isCorrect) {
     state.correct++;
     state.streak++;
+    logExamAnswer(true);
     const coinsEarned = getCoinsPerCorrect();
     state.coins += coinsEarned;
     state.xp += getXpPerCorrect();
     fb.className = 'feedback-box correct-fb';
     fbTitle.textContent = getCorrectMsg();
-    fbDetail.textContent = explain;
-    document.getElementById('dot-' + state.qIndex).className = 'dot done';
+    fbDetail.textContent = (state.examMode ? 'Pojasnilo: ' : '') + explain;
+    if (!state.examMode) document.getElementById('dot-' + state.qIndex).className = 'dot done';
     celebrateCorrect(state.streak, coinsEarned);
-    if (state.streak >= 2) {
+    if (!state.examMode && state.streak >= 2) {
       document.getElementById('streakBadge').style.display = 'inline-flex';
       document.getElementById('streakNum').textContent = state.streak;
     }
   } else {
-    if (getConsumable('extra_life') > 0 && !state.quizFlags.extraLifeUsed) {
+    if (!state.examMode && getConsumable('extra_life') > 0 && !state.quizFlags.extraLifeUsed) {
       useConsumable('extra_life');
       state.quizFlags.extraLifeUsed = true;
       fb.className = 'feedback-box wrong-fb';
@@ -3201,21 +3566,25 @@ function handleAnswer(isCorrect, explain) {
       return;
     }
 
+    logExamAnswer(false);
+
     let keptStreak = false;
-    if (getConsumable('streak_shield') > 0 && state.streak > 0) {
+    if (!state.examMode && getConsumable('streak_shield') > 0 && state.streak > 0) {
       useConsumable('streak_shield');
       keptStreak = true;
       showToast('🛡️ Ščit streaka! Zaporedje ohranjeno.');
     } else {
       state.streak = 0;
-      document.getElementById('streakBadge').style.display = 'none';
-      document.getElementById('streakBadge')?.classList.remove('hot');
+      if (!state.examMode) {
+        document.getElementById('streakBadge').style.display = 'none';
+        document.getElementById('streakBadge')?.classList.remove('hot');
+      }
     }
 
     fb.className = 'feedback-box wrong-fb';
     fbTitle.textContent = keptStreak ? getWrongMsg() + ' (streak ohranjen!)' : getWrongMsg();
-    fbDetail.textContent = '💡 ' + explain;
-    document.getElementById('dot-' + state.qIndex).className = 'dot wrong';
+    fbDetail.textContent = (state.examMode ? 'Pravilen odgovor / pojasnilo: ' : '💡 ') + explain;
+    if (!state.examMode) document.getElementById('dot-' + state.qIndex).className = 'dot wrong';
     celebrateWrong();
     saveState();
     renderPowerupBar(state.questions[state.qIndex]);
@@ -3223,7 +3592,13 @@ function handleAnswer(isCorrect, explain) {
 
   fb.style.display = 'block';
   nextBtn.classList.add('visible');
-  nextBtn.textContent = state.qIndex === state.questions.length - 1 ? '🏁 Poglej rezultate!' : 'Naslednje vprašanje ➡️';
+  if (state.examMode) {
+    nextBtn.textContent = state.qIndex === state.questions.length - 1
+      ? 'Oddaj izpit in poglej rezultate'
+      : 'Naslednje vprašanje';
+  } else {
+    nextBtn.textContent = state.qIndex === state.questions.length - 1 ? '🏁 Poglej rezultate!' : 'Naslednje vprašanje ➡️';
+  }
 
   saveState();
   updateHeader();
@@ -3236,26 +3611,114 @@ function nextQuestion() {
   renderQuestion();
 }
 
+function buildExamSectionReport() {
+  const bySection = {};
+  state.examLog.forEach(entry => {
+    if (!bySection[entry.sectionId]) bySection[entry.sectionId] = { correct: 0, wrong: 0, missed: [] };
+    if (entry.correct) bySection[entry.sectionId].correct++;
+    else {
+      bySection[entry.sectionId].wrong++;
+      if (bySection[entry.sectionId].missed.length < 3) {
+        bySection[entry.sectionId].missed.push(entry.qText);
+      }
+    }
+  });
+
+  return Object.entries(bySection).map(([id, data]) => {
+    const n = data.correct + data.wrong;
+    const sectionPct = n ? Math.round((data.correct / n) * 100) : 0;
+    const meta = EXAM_DOC_SECTIONS[id] || { name: id, color: '#9b98cc' };
+    return { id, name: meta.name, color: meta.color, ...data, total: n, pct: sectionPct };
+  }).sort((a, b) => a.pct - b.pct);
+}
+
+function renderExamGapReport(sections, pct) {
+  const el = document.getElementById('examGapReport');
+  if (!el) return;
+  el.style.display = 'block';
+
+  const weak = sections.filter(s => s.pct < 70);
+  let html = `
+    <div class="exam-gap-title">📋 Pregled po poglavjih gradiva</div>
+    <div class="exam-gap-sub">Katera poglavja iz Izpit.docx še potrebujejo ponavljanje (pod 70 % pravilnih v tem poskusu).</div>
+  `;
+
+  sections.forEach(s => {
+    const cls = s.pct >= 80 ? 'strong' : s.pct >= 60 ? 'mid' : 'weak';
+    html += `
+      <div class="exam-section-row ${cls}">
+        <div class="exam-section-row-head">
+          <span class="exam-section-row-name">${s.name}</span>
+          <span class="exam-section-row-pct" style="color:${s.color}">${s.correct}/${s.total} (${s.pct}%)</span>
+        </div>
+        <div class="exam-section-row-bar">
+          <div class="exam-section-row-fill" style="width:${s.pct}%;background:${s.color}"></div>
+        </div>
+        ${s.missed.length ? '<div class="exam-section-miss">Še ponovi: ' + s.missed.map(m => '«' + m + '»').join(' · ') + '</div>' : ''}
+      </div>
+    `;
+  });
+
+  if (weak.length) {
+    html += `<div class="exam-weak-list">
+      <strong>Prioriteta za ponavljanje:</strong><br>
+      ${weak.map(s => '• ' + s.name + ' (' + s.pct + '%)').join('<br>')}
+      <br><br>Odpri ustrezno temo na domači strani in jo ponovi, nato znova opravi celoten izpit.
+    </div>`;
+  } else if (pct >= 80) {
+    html += `<div class="exam-weak-list" style="border-color:rgba(67,233,123,0.35);background:rgba(67,233,123,0.08)">
+      <strong style="color:var(--green)">Odlično!</strong> Vsa poglavja so nad 70 %. Še enkrat celoten izpit za utrjevanje.
+    </div>`;
+  }
+
+  el.innerHTML = html;
+}
+
 function showResults() {
   const total = state.questions.length;
   const score = state.correct;
   const pct = Math.round((score / total) * 100);
+  const wasExam = state.examMode || state.currentTopic?.id === 'full_exam';
+  const sectionReport = wasExam ? buildExamSectionReport() : [];
+
   let coinsBonus = score * 2 + (pct === 100 ? 10 : 0);
   if (hasPassive('crown')) coinsBonus = Math.floor(coinsBonus * 1.5);
   if (hasPassive('gem') && pct === 100) coinsBonus += 25;
   state.coins += coinsBonus;
   state.xp += score * 5;
 
-  const prev = state.topicScores[state.currentTopic.id]?.best || 0;
-  state.topicScores[state.currentTopic.id] = { best: Math.max(prev, score), total };
+  if (wasExam) {
+    const prevBest = state.examBest?.score || 0;
+    if (score > prevBest) {
+      state.examBest = { score, total, pct, date: new Date().toISOString().slice(0, 10) };
+    }
+    state.topicScores.full_exam = {
+      best: Math.max(state.topicScores.full_exam?.best || 0, score),
+      total,
+    };
+  } else {
+    const prev = state.topicScores[state.currentTopic.id]?.best || 0;
+    state.topicScores[state.currentTopic.id] = { best: Math.max(prev, score), total };
+  }
+
   saveState();
   updateHeader();
+  setExamMode(false);
 
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-results').classList.add('active');
 
+  const gapReport = document.getElementById('examGapReport');
+  const restartBtn = document.getElementById('restartBtn');
+  const shopBtn = document.getElementById('shopResultBtn');
+
   let emoji, title;
-  if (pct === 100)     { emoji = '🌟'; title = 'POPOLNO! Brezhibno!'; }
+  if (wasExam) {
+    if (pct >= 90)      { emoji = '📝'; title = 'Izpit uspešno opravljen — odličen rezultat'; }
+    else if (pct >= 70) { emoji = '📋'; title = 'Izpit opravljen — dobra priprava'; }
+    else if (pct >= 50) { emoji = '📚'; title = 'Delno uspešno — ponovi šibka poglavja'; }
+    else                { emoji = '⚠️'; title = 'Potrebna je dodatna priprava na izpit'; }
+  } else if (pct === 100)     { emoji = '🌟'; title = 'POPOLNO! Brezhibno!'; }
   else if (pct >= 80)  { emoji = '🎉'; title = 'Odlično! Si pravi genij!'; }
   else if (pct >= 60)  { emoji = '😊'; title = 'Dobro! Še malo vaje!'; }
   else if (pct >= 40)  { emoji = '💪'; title = 'Naprej, zmoreš bolje!'; }
@@ -3264,28 +3727,56 @@ function showResults() {
   const resultsBox = document.querySelector('.results-box');
   const resultsEmoji = document.getElementById('resultsEmoji');
   resultsBox?.classList.toggle('perfect', pct === 100);
-  resultsEmoji?.classList.toggle('mega-bounce', pct >= 80);
+  resultsEmoji?.classList.toggle('mega-bounce', pct >= 80 && !wasExam);
 
   document.getElementById('resultsEmoji').textContent = emoji;
   document.getElementById('resultsTitle').textContent = title;
   document.getElementById('resultsScore').textContent = score + '/' + total + ' (' + pct + '%)';
-  let bonusNote = '🪙 +' + coinsBonus + ' kovancev';
-  if (hasPassive('crown')) bonusNote += ' (👑 +50%)';
-  if (hasPassive('gem') && pct === 100) bonusNote += ' (💎 +25)';
-  document.getElementById('coinsEarned').innerHTML = bonusNote + ' zasluženo!';
 
-  screenFlash(pct === 100 ? 'gold' : pct >= 60 ? 'win' : 'lose');
-  launchConfetti(pct === 100 ? 200 : pct >= 80 ? 120 : pct >= 50 ? 60 : 25, pct >= 80 ? 1.5 : 1);
-  spawnCoins(Math.min(coinsBonus, 25), true);
-  popCoinDisplay();
-  if (pct === 100) {
-    showCombo('🏆 POPOLNO!', '#ffd700');
-    setTimeout(() => showCombo('🌟 GENIJ!', '#43e97b'), 800);
-  } else if (pct >= 80) showCombo('🎉 SUPER!', '#4ecdc4');
+  let bonusNote = wasExam
+    ? 'Rezultat izpita: ' + score + ' pravilnih od ' + total + ' vprašanj · 🪙 +' + coinsBonus + ' kovancev'
+    : '🪙 +' + coinsBonus + ' kovancev';
+  if (!wasExam) {
+    if (hasPassive('crown')) bonusNote += ' (👑 +50%)';
+    if (hasPassive('gem') && pct === 100) bonusNote += ' (💎 +25)';
+    bonusNote += ' zasluženo!';
+  }
+  document.getElementById('coinsEarned').innerHTML = bonusNote;
+
+  if (wasExam) {
+    renderExamGapReport(sectionReport, pct);
+    if (restartBtn) restartBtn.textContent = '🔄 Ponovi celoten izpit';
+    if (shopBtn) shopBtn.style.display = 'none';
+  } else {
+    if (gapReport) { gapReport.style.display = 'none'; gapReport.innerHTML = ''; }
+    if (restartBtn) restartBtn.textContent = '🔄 Igraj znova';
+    if (shopBtn) shopBtn.style.display = '';
+  }
+
+  if (wasExam) {
+    screenFlash(pct >= 70 ? 'win' : 'lose');
+    if (pct >= 90) launchConfetti(80, 1);
+    else if (pct >= 70) launchConfetti(40, 0.7);
+  } else {
+    screenFlash(pct === 100 ? 'gold' : pct >= 60 ? 'win' : 'lose');
+    launchConfetti(pct === 100 ? 200 : pct >= 80 ? 120 : pct >= 50 ? 60 : 25, pct >= 80 ? 1.5 : 1);
+    spawnCoins(Math.min(coinsBonus, 25), true);
+    popCoinDisplay();
+    if (pct === 100) {
+      showCombo('🏆 POPOLNO!', '#ffd700');
+      setTimeout(() => showCombo('🌟 GENIJ!', '#43e97b'), 800);
+    } else if (pct >= 80) showCombo('🎉 SUPER!', '#4ecdc4');
+  }
   checkLevelUp();
 }
 
-function restartQuiz() { startQuiz(state.currentTopic.id); }
+function restartQuiz() {
+  if (state.currentTopic?.id === 'full_exam') {
+    startFullExam();
+  } else {
+    startQuiz(state.currentTopic.id);
+  }
+}
 
 // ========== SHOP ==========
 function renderShop() {
@@ -3394,6 +3885,39 @@ function renderStats() {
     </div>
     <div style="font-family:'Fredoka One';font-size:1.2rem;color:var(--blue);margin-bottom:12px">Napredek po temah</div>
   `;
+
+  if (state.examBest) {
+    html += `
+      <div style="background:linear-gradient(135deg,#1e1a60,#2a1f6e);border:2px solid var(--accent);border-radius:16px;padding:18px 20px;margin-bottom:20px">
+        <div style="font-weight:800;margin-bottom:6px">📝 Celoten izpit — najboljši rezultat</div>
+        <div style="font-family:'Fredoka One';font-size:1.6rem;color:var(--accent)">${state.examBest.score}/${state.examBest.total} (${state.examBest.pct}%)</div>
+        <div style="font-size:0.82rem;color:var(--muted);margin-top:4px">${state.examBest.date || ''}</div>
+      </div>
+    `;
+  }
+
+  const sectionIds = Object.keys(state.examSectionStats);
+  if (sectionIds.length) {
+    html += '<div style="font-family:\'Fredoka One\';font-size:1.1rem;color:var(--accent);margin:8px 0 12px">Uspešnost po poglavjih (vsi poskusi izpita)</div>';
+    sectionIds.forEach(id => {
+      const st = state.examSectionStats[id];
+      const n = st.correct + st.wrong;
+      const pct = n ? Math.round((st.correct / n) * 100) : 0;
+      const meta = EXAM_DOC_SECTIONS[id] || { name: id, color: '#9b98cc' };
+      html += `
+        <div style="background:var(--card);border-radius:12px;padding:12px 16px;margin-bottom:8px;font-size:0.88rem">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-weight:700">${meta.name}</span>
+            <span style="color:${meta.color};font-family:'Fredoka One'">${pct}%</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,0.08);border-radius:6px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:${meta.color};border-radius:6px"></div>
+          </div>
+        </div>
+      `;
+    });
+    html += '<div style="height:16px"></div>';
+  }
 
   TOPICS.forEach(t => {
     const s = state.topicScores[t.id];
@@ -3604,6 +4128,16 @@ function showLevelUp(level) {
 }
 
 function celebrateCorrect(streak, coinsEarned) {
+  if (state.examMode) {
+    const qBox = document.getElementById('questionBox');
+    if (qBox) {
+      qBox.classList.remove('lose-glow');
+      void qBox.offsetWidth;
+      qBox.classList.add('win-glow');
+      setTimeout(() => qBox.classList.remove('win-glow'), 500);
+    }
+    return;
+  }
   if (navigator.vibrate) navigator.vibrate(streak >= 5 ? [30, 20, 50] : [25, 15, 35]);
   const qBox = document.getElementById('questionBox');
   if (qBox) {
@@ -3638,6 +4172,15 @@ function celebrateCorrect(streak, coinsEarned) {
 }
 
 function celebrateWrong() {
+  if (state.examMode) {
+    const qBox = document.getElementById('questionBox');
+    if (qBox) {
+      qBox.classList.remove('win-glow');
+      qBox.classList.add('lose-glow');
+      setTimeout(() => qBox.classList.remove('lose-glow'), 400);
+    }
+    return;
+  }
   if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
   const qBox = document.getElementById('questionBox');
   if (qBox) {
@@ -3659,9 +4202,11 @@ function checkLevelUp() {
 
 // ========== HELPERS ==========
 function getCorrectMsg() {
+  if (state.examMode) return 'Odgovor je pravilen.';
   return ['✅ Pravilno! Bravo!','🎯 Odlično!','🌟 Sijajno!','💪 Super!','🔥 Ja, točno!','⚡ Popolno!','🚀 BOOM!','💎 Briljantno!'][Math.floor(Math.random()*8)];
 }
 function getWrongMsg() {
+  if (state.examMode) return 'Odgovor ni pravilen.';
   return ['❌ Napačno...','😅 Ups! Zmota.','🤔 Skoraj, a ne...','📚 Poskusi znova!','💥 Ne tokrat...'][Math.floor(Math.random()*5)];
 }
 
